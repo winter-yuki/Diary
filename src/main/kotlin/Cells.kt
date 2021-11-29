@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -54,8 +55,12 @@ class TextCell : Cell {
 
     @Composable
     override operator fun invoke(notes: Notes) = cell(notes) {
-        // TODO make text mutable #6
-        Text("Text cell")
+        val text = remember { mutableStateOf("") }
+        OutlinedTextField(
+            value = text.value,
+            singleLine = false,
+            onValueChange = { text.value = it }
+        )
     }
 }
 
