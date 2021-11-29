@@ -1,0 +1,10 @@
+= Diary
+
+All your work is what you write. Everything you write is your diary
+
+== Contribution
+
+.Set up
+. Install Intellij IDEA
+. Install https://plugins.jetbrains.com/plugin/16541-compose-multiplatform-ide-support[Compose Multiplatform Plugin]
+. Run
