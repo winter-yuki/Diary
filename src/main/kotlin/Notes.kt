@@ -10,16 +10,15 @@ class Notes(private val cells: List<Cell> = listOf()) {
     @Composable
     operator fun invoke() {
         LazyColumn {
-            items(cells) { it() }
+            items(cells) { it(this@Notes) }
         }
-        // TODO add cell button
-        // TODO move cell up button
-        // TODO move cell down button
-        // TODO show buttons only on focus
+        // TODO add cell button #1
+        // TODO move cell up/down buttons #3
+        // TODO show buttons only on focus #4
     }
 
     fun save(path: Path) {
-        TODO()
+        TODO() // #12
     }
 
     companion object {
