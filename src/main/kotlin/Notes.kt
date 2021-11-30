@@ -1,6 +1,10 @@
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -8,7 +12,10 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.intellij.lang.annotations.JdkConstants
+import org.jetbrains.skija.paragraph.TextBox
 import java.nio.file.Path
 
 class Notes(private val cells: SnapshotStateList<Cell>) {
@@ -19,39 +26,24 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
 
     @Composable
     operator fun invoke() {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth(0.75F),
-            ) {
-                itemsIndexed(cells) { i, cell ->
-                    CellBox(i) { cell() }
+
+        Box(modifier = Modifier.fillMaxSize().padding(10.dp))
+        {
+            val state = rememberLazyListState()
+
+            Column() {
+                LazyColumn(Modifier.fillMaxSize().padding(end = 12.dp), state) {
+                    itemsIndexed(cells) { i, cell -> CellBox(i) { cell() } }
                 }
             }
-            Row {
-                Button(
-                    modifier = Modifier
-                        .wrapContentHeight()
-                        .wrapContentWidth()
-                        .height(50.dp)
-                        .padding(10.dp),
-                    onClick = { cells += TextCell() },
-                ) {
-                    Text("Add text")
-                }
-                Button(
-                    modifier = Modifier
-                        .wrapContentHeight()
-                        .wrapContentWidth()
-                        .height(50.dp)
-                        .padding(10.dp),
-                    onClick = { cells += SketchCell() },
-                ) {
-                    Text("Add scratch")
-                }
-            }
+
+            VerticalScrollbar(
+                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                adapter = rememberScrollbarAdapter(
+                    scrollState = state
+                )
+            )
+
         }
 
         // TODO move cell up/down buttons #3
@@ -60,13 +52,18 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
 
     @Composable
     private fun CellBox(iCell: Int, block: @Composable () -> Unit) {
-        Column(modifier = Modifier.padding(vertical = 4.dp)) {
-            Button(
-                modifier = Modifier
-                    .size(width = 30.dp, height = 25.dp),
-                onClick = { cells.removeAt(iCell) }
-            ) {}
-            block()
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth().fillMaxHeight()
+        ) {
+            Column(modifier = Modifier.padding(vertical = 4.dp).fillMaxWidth(0.75F)) {
+                Button(
+                    modifier = Modifier
+                        .size(width = 30.dp, height = 25.dp),
+                    onClick = { cells.removeAt(iCell) }
+                ) {}
+                block()
+            }
         }
     }
 
@@ -79,4 +76,39 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
             TODO()
         }
     }
+//
+//    @Composable
+//    private fun AddCellBox(block: @Composable () -> Unit) {
+//
+////        Column(
+////            horizontalAlignment = Alignment.CenterHorizontally,
+////            modifier = Modifier.fillMaxWidth().fillMaxHeight()
+////        ) {
+////            Column(modifier = Modifier.padding(vertical = 4.dp).fillMaxWidth(0.75F)) {
+//////                Row() {
+////                    Button(
+////                        modifier = Modifier
+////                            .wrapContentHeight()
+////                            .wrapContentWidth()
+////                            .height(50.dp)
+////                            .padding(10.dp),
+////                        onClick = { cells += TextCell() },
+////                    ) {
+////                        Text("Add text")
+////                    }
+////                    Button(
+////                        modifier = Modifier
+////                            .wrapContentHeight()
+////                            .wrapContentWidth()
+////                            .height(50.dp)
+////                            .padding(10.dp),
+////                        onClick = { cells += SketchCell() },
+////                    ) {
+////                        Text("Add scratch")
+////                    }
+//////                }
+////            }
+////        }
+//
+//    }
 }
