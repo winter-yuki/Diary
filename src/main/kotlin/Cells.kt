@@ -2,12 +2,9 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Surface
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -48,7 +45,6 @@ abstract class AbstractCell : Cell {
             block()
         }
     }
-}
 
     companion object {
         fun of(path: Path): Cell {
@@ -105,8 +101,7 @@ class RenderedTextCell(public val RawText: String = "") : AbstractCell() {
             )
             Button(
                 modifier = Modifier
-                    .wrapContentHeight()
-                    .wrapContentWidth()
+                    .wrapContentSize()
                     .fillMaxWidth()
                     .height(30.dp)
                     .padding(1.dp),
