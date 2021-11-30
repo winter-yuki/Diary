@@ -10,9 +10,10 @@ fun main() = application {
             // TODO double notes screen  #15
             // TODO drug-n-drop cells from one screen to another #16
             Notes(
-                TextCell(),
-                SketchCell(),
-                TextCell()
+                List(10) { i ->
+                    if (i % 2 == 0) TextCell()
+                    else SketchCell()
+                }
             )()
         }
     }
