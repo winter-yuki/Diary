@@ -12,8 +12,10 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.intellij.lang.annotations.JdkConstants
 import org.jetbrains.skija.paragraph.TextBox
 import java.nio.file.Path
@@ -63,26 +65,29 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
                     onClick = { cells.removeAt(iCell) }
                 ) {}
                 block()
-                Row() {
+                Row(
+                ) {
                     Button(
                         modifier = Modifier
                             .wrapContentHeight()
                             .wrapContentWidth()
-                            .height(50.dp)
-                            .padding(10.dp),
+                            .fillMaxWidth(0.5f)
+                            .height(30.dp)
+                            .padding(1.dp),
                         onClick = { cells += TextCell() },
                     ) {
-                        Text("Add text")
+                        Text("Add text", fontSize = 10.sp)
                     }
                     Button(
                         modifier = Modifier
                             .wrapContentHeight()
                             .wrapContentWidth()
-                            .height(50.dp)
-                            .padding(10.dp),
+                            .fillMaxWidth()
+                            .height(30.dp)
+                            .padding(1.dp),
                         onClick = { cells += SketchCell() },
                     ) {
-                        Text("Add scratch")
+                        Text("Add scratch", fontSize = 10.sp)
                     }
                 }
             }
