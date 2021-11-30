@@ -2,6 +2,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
@@ -16,7 +17,6 @@ import java.nio.file.Path
 
 interface Cell {
     fun save(path: Path)
-
     fun load(path: Path): Cell
 
     @Composable
@@ -54,7 +54,7 @@ class TextCell : AbstractCell() {
     override operator fun invoke() = cell {
         var text by remember { mutableStateOf("") }
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
             value = text,
             singleLine = false,
             onValueChange = { text = it }
