@@ -61,7 +61,8 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
                 Button(
                     modifier = Modifier
                         .padding(5.dp)
-                        .size(width = 30.dp, height = 25.dp),
+                        .size(width = 30.dp, height = 25.dp)
+                        .align(Alignment.End),
                     onClick = { cells.removeAt(iCell) }
                 ) {}
 
