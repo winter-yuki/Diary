@@ -23,6 +23,9 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
 
     @Composable
     operator fun invoke() {
+        if (cells.isEmpty()) {
+            cells += TextCell()
+        }
         Box(modifier = Modifier.fillMaxSize().padding(10.dp)) {
             val state = rememberLazyListState()
             Column {
@@ -97,7 +100,8 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
 
     companion object {
         fun from(path: Path): Notes {
-            TODO()
+            // TODO
+            return Notes()
         }
     }
 }
