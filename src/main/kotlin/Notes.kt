@@ -61,7 +61,8 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
             Column(modifier = Modifier.padding(vertical = 4.dp).fillMaxWidth(0.75F)) {
                 Button(
                     modifier = Modifier
-                        .size(width = 30.dp, height = 25.dp),
+                        .size(width = 30.dp, height = 25.dp)
+                        .align(Alignment.End),
                     onClick = { cells.removeAt(iCell) }
                 ) {}
                 block()
