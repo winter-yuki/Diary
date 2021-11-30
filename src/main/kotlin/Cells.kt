@@ -1,9 +1,7 @@
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
@@ -22,7 +20,7 @@ interface Cell {
     fun load(path: Path): Cell
 
     @Composable
-    operator fun invoke(notes: Notes)
+    operator fun invoke()
 
     companion object {
         fun of(path: Path): Cell {
@@ -33,16 +31,12 @@ interface Cell {
 
 abstract class AbstractCell : Cell {
     @Composable
-    protected fun cell(notes: Notes, block: @Composable () -> Unit) {
+    protected fun cell(block: @Composable () -> Unit) {
         // TODO border rectangle #5
         // TODO remove cell button #2
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Surface(shape = MaterialTheme.shapes.large, elevation = 2.dp) {
-                block()
-            }
+
+        Surface(shape = MaterialTheme.shapes.large, elevation = 2.dp) {
+            block()
         }
     }
 }
@@ -57,15 +51,13 @@ class TextCell : AbstractCell() {
     }
 
     @Composable
-    override operator fun invoke(notes: Notes) = cell(notes) {
-        val text = remember { mutableStateOf("") }
+    override operator fun invoke() = cell {
+        var text by remember { mutableStateOf("") }
         OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 10.dp),
-            value = text.value,
+            modifier = Modifier.fillMaxWidth(),
+            value = text,
             singleLine = false,
-            onValueChange = { text.value = it }
+            onValueChange = { text = it }
         )
     }
 }
@@ -80,10 +72,10 @@ class SketchCell : AbstractCell() {
     }
 
     @Composable
-    override operator fun invoke(notes: Notes) = cell(notes) {
+    override operator fun invoke() = cell {
         var offsetX by remember { mutableStateOf(0f) }
         var offsetY by remember { mutableStateOf(0f) }
-        val action = mutableStateOf<Offset?>(null)
+        var action by mutableStateOf<Offset?>(null)
         val path = androidx.compose.ui.graphics.Path()
         Canvas(
             modifier = Modifier
@@ -100,11 +92,11 @@ class SketchCell : AbstractCell() {
                         offsetX += dragAmount.x
                         offsetY += dragAmount.y
                         path.lineTo(offsetX, offsetY)
-                        action.value = Offset(offsetX, offsetY)
+                        action = Offset(offsetX, offsetY)
                     }
                 }
         ) {
-            action.value?.let {
+            action?.let {
                 drawPath(
                     path = path,
                     color = Color.Magenta,

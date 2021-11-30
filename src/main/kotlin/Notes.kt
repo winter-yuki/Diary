@@ -1,6 +1,6 @@
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +26,9 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(0.75F),
             ) {
-                items(cells) { it(this@Notes) }
+                itemsIndexed(cells) { i, cell ->
+                    CellBox(i) { cell() }
+                }
             }
             Row {
                 Button(
@@ -54,6 +56,18 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
 
         // TODO move cell up/down buttons #3
         // TODO show buttons only on focus #4
+    }
+
+    @Composable
+    private fun CellBox(iCell: Int, block: @Composable () -> Unit) {
+        Column(modifier = Modifier.padding(vertical = 4.dp)) {
+            Button(
+                modifier = Modifier
+                    .size(width = 30.dp, height = 25.dp),
+                onClick = { cells.removeAt(iCell) }
+            ) {}
+            block()
+        }
     }
 
     fun save(path: Path) {
