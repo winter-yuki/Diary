@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
@@ -14,6 +15,9 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.nio.file.Path
@@ -100,7 +104,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
                             .padding(1.dp),
                         onClick = { cells += SketchCell() },
                     ) {
-                        Text("Add scratch", fontSize = 10.sp)
+                        Text("Add sketch", fontSize = 10.sp)
                     }
                 }
             }
@@ -116,39 +120,4 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
             TODO()
         }
     }
-//
-//    @Composable
-//    private fun AddCellBox(block: @Composable () -> Unit) {
-//
-////        Column(
-////            horizontalAlignment = Alignment.CenterHorizontally,
-////            modifier = Modifier.fillMaxWidth().fillMaxHeight()
-////        ) {
-////            Column(modifier = Modifier.padding(vertical = 4.dp).fillMaxWidth(0.75F)) {
-//////                Row() {
-////                    Button(
-////                        modifier = Modifier
-////                            .wrapContentHeight()
-////                            .wrapContentWidth()
-////                            .height(50.dp)
-////                            .padding(10.dp),
-////                        onClick = { cells += TextCell() },
-////                    ) {
-////                        Text("Add text")
-////                    }
-////                    Button(
-////                        modifier = Modifier
-////                            .wrapContentHeight()
-////                            .wrapContentWidth()
-////                            .height(50.dp)
-////                            .padding(10.dp),
-////                        onClick = { cells += SketchCell() },
-////                    ) {
-////                        Text("Add scratch")
-////                    }
-//////                }
-////            }
-////        }
-//
-//    }
 }

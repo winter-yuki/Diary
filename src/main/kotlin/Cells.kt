@@ -1,17 +1,26 @@
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.sun.jdi.Value
 import java.nio.file.Path
 
 interface Cell {
@@ -41,7 +50,11 @@ abstract class AbstractCell : Cell {
     }
 }
 
+
 class TextCell : AbstractCell() {
+
+    var rendered = false
+
     override fun save(path: Path) {
         TODO("Not yet implemented") // #7
     }
@@ -52,13 +65,43 @@ class TextCell : AbstractCell() {
 
     @Composable
     override operator fun invoke() = cell {
-        var text by remember { mutableStateOf("") }
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = text,
-            singleLine = false,
-            onValueChange = { text = it }
-        )
+        var rendered = false
+        var RawText by remember { mutableStateOf("") }
+
+//        var AnnostatedText = buildAnnotatedString {
+//            append("Click ")
+//            pushStringAnnotation(tag = "tag", annotation = "annotation")
+//            withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)
+//            ) { append("here") }
+//        }
+//
+//        ClickableText(
+//            text = AnnostatedText,
+//            onClick = { println("Clicked") }
+//        )
+
+        Canvas(
+            modifier = Modifier
+                .size(width = 500.dp, height = 500.dp)
+                .background(color = Color.Green)
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onDoubleTap = { println("Double click") },
+                        onTap = { println("Click") }
+                    )
+                }
+        ) {
+            if (rendered) {
+                println("Oooops")
+            } else {
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = RawText,
+                    singleLine = false,
+                    onValueChange = { RawText = it },
+                )
+            }
+        }
     }
 }
 
