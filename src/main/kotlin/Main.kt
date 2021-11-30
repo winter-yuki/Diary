@@ -77,23 +77,6 @@ fun main() = application {
                 Menu(tm)
                 WorkSpace(tm)
             }
-//        DesktopMaterialTheme {
-//            // TODO context menu: save notes, load notes #13
-//            // TODO main menu #14
-//            // TODO double notes screen  #15
-//            // TODO drug-n-drop cells from one screen to another #16
-//            Column(
-//                modifier = Modifier.fillMaxWidth()
-//            ) {
-//                Text("Ctrl+Tab для переключения между ячейками вперед")
-//                Text("Shift+Tab для переключения между ячейками назад")
-//                Notes(
-//                    List(3) { i ->
-//                        if (i % 2 == 0) TextCell()
-//                        else SketchCell()
-//                    }
-//                )()
-//            }
         }
     }
 }
