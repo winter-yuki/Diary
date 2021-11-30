@@ -1,8 +1,10 @@
 import androidx.compose.desktop.DesktopMaterialTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 
@@ -44,9 +46,28 @@ fun main() = application {
                     Notes(
                         TextCell(),
                         SketchCell(),
-                        TextCell(),
                         TextCell()
                     ) ()
+                    Row() {
+                        Button (
+                            modifier = Modifier
+                                .fillMaxWidth(0.5f)
+                                .height(50.dp)
+                                .padding(10.dp),
+                            onClick = {},
+                        ) {
+                            Text("Add text cell")
+                        }
+                        Button (
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp)
+                                .padding(10.dp),
+                            onClick = {},
+                        ) {
+                            Text("Add scratch cell")
+                        }
+                    }
                 }
                 Box (modifier = Modifier.fillMaxHeight().fillMaxWidth()) {}
             }
