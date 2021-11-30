@@ -71,8 +71,7 @@ fun main() = application {
 
             Notes(
                 List(3) { i ->
-                    if (i % 2 == 0) TextCell()
-                    else SketchCell()
+                    if (i % 2 == 0) { TextCell() } else { SketchCell() }
                 }
             )()
         }

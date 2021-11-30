@@ -38,7 +38,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
 
             Column() {
                 LazyColumn(Modifier.fillMaxSize().padding(end = 12.dp), state) {
-                    itemsIndexed(cells) { i, cell -> CellBox(i) { cell() } }
+                    itemsIndexed(cells) { i, cell ->  CellBox(i, cell) { cell() } }
                 }
             }
 
@@ -56,7 +56,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
     }
 
     @Composable
-    private fun CellBox(iCell: Int, block: @Composable () -> Unit) {
+    private fun CellBox(iCell: Int, cell: Cell, block: @Composable () -> Unit ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth().fillMaxHeight()
@@ -82,12 +82,37 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
                     }
                 }
                 block()
-                Row(
-                ) {
+                if (cell is TextCell)
+                {
                     Button(
                         modifier = Modifier
-                            .wrapContentHeight()
-                            .wrapContentWidth()
+                            .fillMaxWidth()
+                            .height(30.dp)
+                            .padding(1.dp),
+                        onClick = { cells += RenderedTextCell( cell.RawText ); cells.removeAt(iCell) },
+                    ) {
+                        Text("Render", fontSize = 10.sp)
+                    }
+                }
+                if (cell is RenderedTextCell)
+                {
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(30.dp)
+                            .padding(1.dp),
+                        onClick = { cells += TextCell( cell.RawText ); cells.removeAt(iCell) },
+                    ) {
+                        Text("Edit", fontSize = 10.sp)
+                    }
+                }
+
+                Row(
+                ) {
+
+                    Button(
+                        modifier = Modifier
+                            .wrapContentSize()
                             .fillMaxWidth(0.5f)
                             .height(30.dp)
                             .padding(1.dp),
@@ -97,8 +122,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
                     }
                     Button(
                         modifier = Modifier
-                            .wrapContentHeight()
-                            .wrapContentWidth()
+                            .wrapContentSize()
                             .fillMaxWidth()
                             .height(30.dp)
                             .padding(1.dp),

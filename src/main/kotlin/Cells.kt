@@ -5,10 +5,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -20,6 +17,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.sun.jdi.Value
 import java.nio.file.Path
 
@@ -51,10 +49,7 @@ abstract class AbstractCell : Cell {
 }
 
 
-class TextCell : AbstractCell() {
-
-    var rendered = false
-
+class TextCell(public var RawText: String = "") : AbstractCell() {
     override fun save(path: Path) {
         TODO("Not yet implemented") // #7
     }
@@ -65,41 +60,51 @@ class TextCell : AbstractCell() {
 
     @Composable
     override operator fun invoke() = cell {
-        var rendered = false
-        var RawText by remember { mutableStateOf("") }
+        var text by remember { mutableStateOf(RawText) }
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = text,
+            singleLine = false,
+            onValueChange = { text = it; RawText = it },
+        )
+    }
+}
 
-//        var AnnostatedText = buildAnnotatedString {
-//            append("Click ")
-//            pushStringAnnotation(tag = "tag", annotation = "annotation")
-//            withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)
-//            ) { append("here") }
-//        }
-//
-//        ClickableText(
-//            text = AnnostatedText,
-//            onClick = { println("Clicked") }
-//        )
+class RenderedTextCell(public val RawText: String = "") : AbstractCell() {
+    override fun save(path: Path) {
+        TODO("Not yet implemented") // #7
+    }
 
-        Canvas(
-            modifier = Modifier
-                .size(width = 500.dp, height = 500.dp)
-                .background(color = Color.Green)
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onDoubleTap = { println("Double click") },
-                        onTap = { println("Click") }
-                    )
-                }
-        ) {
-            if (rendered) {
-                println("Oooops")
-            } else {
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = RawText,
-                    singleLine = false,
-                    onValueChange = { RawText = it },
-                )
+    override fun load(path: Path): TextCell {
+        TODO("Not yet implemented") // #7
+    }
+
+    @Composable
+    override operator fun invoke() = cell {
+
+        var AnnostatedText = buildAnnotatedString {
+            append(RawText)
+            pushStringAnnotation(tag = "tag", annotation = "annotation")
+            withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)
+            ) { append("link") }
+        }
+
+        Column() {
+//            Text(ClickableText)
+            ClickableText(
+                text = AnnostatedText,
+                onClick = { println("Clicked") }
+            )
+            Button(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .wrapContentWidth()
+                    .fillMaxWidth()
+                    .height(30.dp)
+                    .padding(1.dp),
+                onClick = { },
+            ) {
+                Text("Render", fontSize = 10.sp)
             }
         }
     }
