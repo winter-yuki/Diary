@@ -54,8 +54,6 @@ fun main() = application {
         onCloseRequest = ::exitApplication
     ) {
         // TODO menu: save notes, load notes #13
-        // TODO main menu #14
-        // TODO double notes screen  #15
         // TODO drug-n-drop cells from one screen to another #16
 
         val notes = Notes(
