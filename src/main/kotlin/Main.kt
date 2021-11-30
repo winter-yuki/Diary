@@ -14,7 +14,6 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowSize
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import java.awt.FileDialog
 
 @Composable
 private fun MenuButton(text: String, onClick: () -> Unit) {
@@ -46,19 +45,11 @@ private fun Menu(tm: TabManager) {
                 }
             }?.let { tab -> tm.add(tab) }
         }
-        MenuButton("Save") {
-            val path = callFileExplorer(
-                title = "Select File Path",
-                mode = FileDialog.SAVE
-            ) ?: return@MenuButton
-            println(path.toString())
-            // TODO
-        }
     }
 }
 
 @Composable
-fun WorkSpace(tm: TabManager) {
+private fun WorkSpace(tm: TabManager) {
     tm()
 }
 

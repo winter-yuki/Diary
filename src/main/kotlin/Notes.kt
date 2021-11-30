@@ -13,7 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.awt.FileDialog
+import java.nio.file.Files.createDirectory
 import java.nio.file.Path
+import kotlin.io.path.deleteIfExists
 
 class Notes(private val cells: SnapshotStateList<Cell>) {
 
@@ -23,12 +26,25 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
 
     @Composable
     operator fun invoke() {
-        if (cells.isEmpty()) {
-            cells += TextCell()
-        }
         Box(modifier = Modifier.fillMaxSize().padding(10.dp)) {
             val state = rememberLazyListState()
+            if (cells.isEmpty()) {
+                cells += TextCell()
+            }
             Column {
+                Button(
+                    onClick = {
+                        val path = callFileExplorer(
+                            title = "Select File Path",
+                            mode = FileDialog.SAVE
+                        )?.let { path ->
+                            save(path)
+                        }
+                    },
+                    modifier = Modifier.align(Alignment.End).wrapContentSize()
+                ) {
+                    Text("Save")
+                }
                 LazyColumn(
                     modifier = Modifier.fillMaxSize().padding(end = 12.dp),
                     state = state
@@ -72,30 +88,42 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
                 block()
 
                 Row {
-                    val size = 10.sp
-                    Button(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .padding(10.dp),
-                        onClick = { cells.add(iCell, TextCell()) },
-                    ) {
-                        Text("Add text", fontSize = size)
+                    CellButton("Add text") {
+                        cells.add(iCell, TextCell())
                     }
-                    Button(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .padding(10.dp),
-                        onClick = { cells.add(iCell, SketchCell()) },
-                    ) {
-                        Text("Add sketch", fontSize = size)
+                    CellButton("Add sketch") {
+                        cells.add(iCell, SketchCell())
                     }
                 }
             }
         }
     }
 
+    @Composable
+    private fun CellButton(text: String, onClick: () -> Unit) {
+        Button(
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(10.dp),
+            onClick = onClick,
+        ) {
+            Text(text, fontSize = 10.sp)
+        }
+    }
+
     fun save(path: Path) {
-        TODO() // #12
+        println("Save: $path")
+        path.removeAll { true }
+        path.deleteIfExists()
+        val dir = createDirectory(path)
+        cells.forEachIndexed { i, cell ->
+//            cell.save()
+
+//            val file = kotlin.io.path.createFile(dir, prefix = "$i-")
+//            file.writeLines(listOf("Hello", "world"))
+//            cell.save(i, dir)
+        }
+        // TODO
     }
 
     companion object {

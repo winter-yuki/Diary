@@ -26,12 +26,15 @@ class PdfTab : Tab {
     }
 }
 
-class TabManager(private val tabs: SnapshotStateList<Tab> = mutableStateListOf()) {
+class TabManager(private val _tabs: SnapshotStateList<Tab> = mutableStateListOf()) {
+
+    val tabs: List<Tab>
+        get() = _tabs
 
     constructor(vararg tabs: Tab) : this(tabs.toMutableList().toMutableStateList())
 
     fun add(tab: Tab) {
-        tabs += tab
+        _tabs += tab
     }
 
     @Composable
@@ -41,8 +44,8 @@ class TabManager(private val tabs: SnapshotStateList<Tab> = mutableStateListOf()
             return
         }
         Row {
-            tabs.forEachIndexedCo { i, tab ->
-                val fraction = 1F / (tabs.size - i)
+            _tabs.forEachIndexedCo { i, tab ->
+                val fraction = 1F / (_tabs.size - i)
                 Box(modifier = Modifier.fillMaxWidth(fraction)) {
                     tab()
                 }
