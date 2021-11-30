@@ -16,22 +16,31 @@ import androidx.compose.ui.window.rememberWindowState
 @Composable
 fun Menu(tm: TabManager) {
     Row {
-        val size = 13.sp
-        val modifier = Modifier
-            .wrapContentSize()
         forEachCo(
             "New" to {
                 val notes = Notes(TextCell())
                 tm.add(NotesTab(notes))
             },
-            "Open" to { TODO() },
-            "Save" to { TODO() }
+            "Open" to {
+                val path = callFileExplorer("Select File to Open")
+                val tab = when (FileType.of(path)) {
+                    FileType.Diary -> {
+                        val notes = Notes.from(path)
+                        NotesTab(notes)
+                    }
+                    else -> TODO("Show error dialog: unsupported file type")
+                }
+                tm.add(tab)
+            },
+            "Save" to {
+                TODO("Determine notes to save")
+            }
         ) { (text, block) ->
             TextButton(
                 onClick = block,
-                modifier = modifier
+                modifier = Modifier.wrapContentSize()
             ) {
-                Text(text, fontSize = size)
+                Text(text, fontSize = 13.sp)
             }
         }
     }
