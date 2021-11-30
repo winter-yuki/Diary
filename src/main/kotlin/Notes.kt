@@ -63,6 +63,28 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
                     onClick = { cells.removeAt(iCell) }
                 ) {}
                 block()
+                Row() {
+                    Button(
+                        modifier = Modifier
+                            .wrapContentHeight()
+                            .wrapContentWidth()
+                            .height(50.dp)
+                            .padding(10.dp),
+                        onClick = { cells += TextCell() },
+                    ) {
+                        Text("Add text")
+                    }
+                    Button(
+                        modifier = Modifier
+                            .wrapContentHeight()
+                            .wrapContentWidth()
+                            .height(50.dp)
+                            .padding(10.dp),
+                        onClick = { cells += SketchCell() },
+                    ) {
+                        Text("Add scratch")
+                    }
+                }
             }
         }
     }

@@ -50,7 +50,7 @@ fun main() = application {
             // TODO drug-n-drop cells from one screen to another #16
 
             Notes(
-                List(3) { i ->
+                List(30) { i ->
                     if (i % 2 == 0) TextCell()
                     else SketchCell()
                 }
