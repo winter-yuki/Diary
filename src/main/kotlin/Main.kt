@@ -1,9 +1,12 @@
 import androidx.compose.desktop.DesktopMaterialTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowSize
@@ -42,7 +45,12 @@ class TabManager(private val tabs: SnapshotStateList<Tab> = mutableStateListOf(E
     @Composable
     operator fun invoke() {
         Row {
-            tabs.forEachCo { it() }
+            tabs.forEachIndexedCo { i, tab ->
+                val fraction = 1F / (tabs.size - i)
+                Box(modifier = Modifier.fillMaxWidth(fraction)) {
+                    tab()
+                }
+            }
         }
     }
 }
@@ -70,6 +78,7 @@ fun main() = application {
             // TODO double notes screen  #15
             // TODO drug-n-drop cells from one screen to another #16
             TabManager(
+                NotesTab(notes),
                 NotesTab(notes),
                 NotesTab(notes)
             )()
