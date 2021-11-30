@@ -1,6 +1,8 @@
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import java.nio.file.Path
 
 class Notes(private val cells: List<Cell> = listOf()) {

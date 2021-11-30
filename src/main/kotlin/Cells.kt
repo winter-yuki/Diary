@@ -1,12 +1,9 @@
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,7 +27,11 @@ interface Cell {
     fun cell(notes: Notes, block: @Composable () -> Unit) {
         // TODO border rectangle #5
         // TODO remove cell button #2
-        Row(modifier = Modifier.padding(8.dp)) {
+        println("width")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
             Surface(shape = MaterialTheme.shapes.large, elevation = 2.dp) {
                 block()
             }
@@ -57,6 +58,10 @@ class TextCell : Cell {
     override operator fun invoke(notes: Notes) = cell(notes) {
         val text = remember { mutableStateOf("") }
         OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp)
+                .padding(vertical = 10.dp),
             value = text.value,
             singleLine = false,
             onValueChange = { text.value = it }
@@ -81,7 +86,8 @@ class SketchCell : Cell {
         val path = androidx.compose.ui.graphics.Path()
         Canvas(
             modifier = Modifier
-                .size(300.dp)
+                .height(250.dp)
+                .fillMaxWidth()
                 .pointerInput(Unit) {
                     detectDragGestures(
                         onDragStart = {

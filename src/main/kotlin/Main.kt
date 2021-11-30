@@ -1,7 +1,7 @@
 import androidx.compose.desktop.DesktopMaterialTheme
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
@@ -14,18 +14,41 @@ fun main() = application {
             // TODO double notes screen  #15
             // TODO drug-n-drop cells from one screen to another #16
 
-            Column (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    ) {
-                Text("Ctrl+Tab для переключения между ячейками вперед")
-                Text("Shift+Tab для переключения между ячейками назад")
-                Notes(
-                    TextCell(),
-                    SketchCell(),
-                    TextCell(),
-                    TextCell()
-                )()
+            //            var WinWidth = 500.dp
+            //            Box (
+            //                modifier = Modifier
+            //                    .fillMaxSize()
+            //                    .onSizeChanged {
+            //                        WinWidth = it.toSize().width.dp
+            //                        println("Window width: $WinWidth")
+            //                    }
+            //            ) {
+            //                Box (
+            //                    modifier = Modifier
+            //                        .background(color = Color.Green)
+            //                        .fillMaxHeight()
+            //                        .width( WinWidth/2 )
+            //                ) {}
+            //            }
+
+            Row () {
+                Box (modifier = Modifier.fillMaxHeight().fillMaxWidth(0.2f)) {}
+                Column (
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(0.75f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("Ctrl+Tab для переключения между ячейками вперед")
+                    Text("Shift+Tab для переключения между ячейками назад")
+                    Notes(
+                        TextCell(),
+                        SketchCell(),
+                        TextCell(),
+                        TextCell()
+                    ) ()
+                }
+                Box (modifier = Modifier.fillMaxHeight().fillMaxWidth()) {}
             }
         }
     }
