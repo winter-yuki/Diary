@@ -1,20 +1,57 @@
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Button
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import java.nio.file.Path
 
-class Notes(private val cells: List<Cell> = listOf()) {
+class Notes(private val cells: SnapshotStateList<Cell>) {
 
-    constructor(vararg cells: Cell) : this(cells.toList())
+    constructor(vararg cells: Cell) : this(cells.toMutableList())
+    constructor(cells: Iterable<Cell>) : this(cells.toMutableList())
+    constructor(cells: MutableList<Cell>) : this(cells.toMutableStateList())
 
     @Composable
     operator fun invoke() {
-        LazyColumn {
-            items(cells) { it(this@Notes) }
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(0.75F),
+            ) {
+                items(cells) { it(this@Notes) }
+            }
+            Row {
+                Button(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .wrapContentWidth()
+                        .height(50.dp)
+                        .padding(10.dp),
+                    onClick = { cells += TextCell() },
+                ) {
+                    Text("Add text")
+                }
+                Button(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .wrapContentWidth()
+                        .height(50.dp)
+                        .padding(10.dp),
+                    onClick = { cells += SketchCell() },
+                ) {
+                    Text("Add scratch")
+                }
+            }
         }
-        // TODO add cell button #1
+
         // TODO move cell up/down buttons #3
         // TODO show buttons only on focus #4
     }
