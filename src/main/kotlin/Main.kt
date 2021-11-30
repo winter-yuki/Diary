@@ -71,6 +71,13 @@ fun main() = application {
                 }
                 Box (modifier = Modifier.fillMaxHeight().fillMaxWidth()) {}
             }
+
+//            Notes(
+//                List(10) { i ->
+//                    if (i % 2 == 0) TextCell()
+//                    else SketchCell()
+//                }
+//            )()
         }
     }
 }

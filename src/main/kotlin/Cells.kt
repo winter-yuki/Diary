@@ -1,12 +1,13 @@
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -80,8 +81,8 @@ class SketchCell : Cell {
 
     @Composable
     override operator fun invoke(notes: Notes) = cell(notes) {
-        val offsetX = remember { mutableStateOf(0f) }
-        val offsetY = remember { mutableStateOf(0f) }
+        var offsetX by remember { mutableStateOf(0f) }
+        var offsetY by remember { mutableStateOf(0f) }
         val action = mutableStateOf<Offset?>(null)
         val path = androidx.compose.ui.graphics.Path()
         Canvas(
@@ -91,15 +92,15 @@ class SketchCell : Cell {
                 .pointerInput(Unit) {
                     detectDragGestures(
                         onDragStart = {
-                            offsetX.value = it.x
-                            offsetY.value = it.y
+                            offsetX = it.x
+                            offsetY = it.y
                             path.moveTo(it.x, it.y)
                         }
                     ) { _, dragAmount ->
-                        offsetX.value += dragAmount.x
-                        offsetY.value += dragAmount.y
-                        path.lineTo(offsetX.value, offsetY.value)
-                        action.value = Offset(offsetX.value, offsetY.value)
+                        offsetX += dragAmount.x
+                        offsetY += dragAmount.y
+                        path.lineTo(offsetX, offsetY)
+                        action.value = Offset(offsetX, offsetY)
                     }
                 }
         ) {
