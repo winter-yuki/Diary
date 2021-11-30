@@ -1,67 +1,48 @@
 import androidx.compose.desktop.DesktopMaterialTheme
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowSize
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 
-interface Tab : UIElem {
-    @Composable
-    override operator fun invoke()
-}
-
-class EmptyTab : Tab {
-    @Composable
-    override operator fun invoke() {
-        TODO("Not yet implemented")
-    }
-}
-
-// TODO delegate
-class NotesTab(val notes: Notes) : Tab {
-    @Composable
-    override operator fun invoke() = notes()
-}
-
-class PdfTab : Tab {
-    @Composable
-    override operator fun invoke() {
-        TODO("Not yet implemented")
-    }
-}
-
-class TabManager(private val tabs: SnapshotStateList<Tab> = mutableStateListOf(EmptyTab())) {
-
-    constructor(vararg tabs: Tab) : this(tabs.toMutableList().toMutableStateList())
-
-    @Composable
-    operator fun invoke() {
-        Row {
-            tabs.forEachIndexedCo { i, tab ->
-                val fraction = 1F / (tabs.size - i)
-                Box(modifier = Modifier.fillMaxWidth(fraction)) {
-                    tab()
-                }
+@Composable
+fun Menu(tm: TabManager) {
+    Row {
+        val size = 13.sp
+        val modifier = Modifier
+            .wrapContentSize()
+        forEachCo(
+            "New" to {
+                val notes = Notes(TextCell())
+                tm.add(NotesTab(notes))
+            },
+            "Open" to { TODO() },
+            "Save" to { TODO() }
+        ) { (text, block) ->
+            TextButton(
+                onClick = block,
+                modifier = modifier
+            ) {
+                Text(text, fontSize = size)
             }
         }
     }
 }
 
+@Composable
+fun WorkSpace(tm: TabManager) {
+    tm()
+}
+
 fun main() = application {
-    val notes = Notes(
-        List(10) { i ->
-            if (i % 2 == 0) TextCell()
-            else SketchCell()
-        }
-    )
     Window(
         title = "Notes",
         state = rememberWindowState(
@@ -72,16 +53,28 @@ fun main() = application {
         ),
         onCloseRequest = ::exitApplication
     ) {
+        // TODO menu: save notes, load notes #13
+        // TODO main menu #14
+        // TODO double notes screen  #15
+        // TODO drug-n-drop cells from one screen to another #16
+
+        val notes = Notes(
+            List(10) { i ->
+                if (i % 2 == 0) TextCell()
+                else SketchCell()
+            }
+        )
+
+        val tm = TabManager(
+            NotesTab(notes),
+            NotesTab(notes),
+        )
+
         DesktopMaterialTheme {
-            // TODO context menu: save notes, load notes #13
-            // TODO main menu #14
-            // TODO double notes screen  #15
-            // TODO drug-n-drop cells from one screen to another #16
-            TabManager(
-                NotesTab(notes),
-                NotesTab(notes),
-                NotesTab(notes)
-            )()
+            Column {
+                Menu(tm)
+                WorkSpace(tm)
+            }
         }
     }
 }

@@ -18,3 +18,10 @@ fun <T> Iterable<T>.forEachCo(block: @Composable (T) -> Unit) {
         block(t)
     }
 }
+
+@Composable
+fun <T> forEachCo(vararg ts: T, block: @Composable (T) -> Unit) {
+    for (t in ts) {
+        block(t)
+    }
+}
