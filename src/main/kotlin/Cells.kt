@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -53,11 +52,11 @@ class TextCell : Cell {
 
     @Composable
     override operator fun invoke(notes: Notes) = cell(notes) {
-        val text = remember { mutableStateOf("") }
+        var text by remember { mutableStateOf("") }
         OutlinedTextField(
-            value = text.value,
+            value = text,
             singleLine = false,
-            onValueChange = { text.value = it }
+            onValueChange = { text = it }
         )
     }
 }
