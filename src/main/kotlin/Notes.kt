@@ -15,9 +15,6 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.nio.file.Path
@@ -31,24 +28,28 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
 
     @Composable
     operator fun invoke() {
-
+        if (cells.isEmpty()) {
+            cells += TextCell()
+        }
         Box(modifier = Modifier.fillMaxSize().padding(10.dp))
         {
             val state = rememberLazyListState()
-
             Column() {
-                LazyColumn(Modifier.fillMaxSize().padding(end = 12.dp), state) {
-                    itemsIndexed(cells) { i, cell ->  CellBox(i, cell) { cell() } }
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize().padding(end = 12.dp),
+                    state = state
+                ) {
+                    itemsIndexed(cells) { i, cell ->
+                        CellBox(i, cell) { cell() }
+                    }
                 }
             }
-
             VerticalScrollbar(
                 modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
                 adapter = rememberScrollbarAdapter(
                     scrollState = state
                 )
             )
-
         }
 
         // TODO move cell up/down buttons #3
@@ -56,56 +57,48 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
     }
 
     @Composable
-    private fun CellBox(iCell: Int, cell: Cell, block: @Composable () -> Unit ) {
+    private fun CellBox(iCell: Int, cell: Cell, block: @Composable () -> Unit) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth().fillMaxHeight()
         ) {
             Column(modifier = Modifier.padding(vertical = 4.dp).fillMaxWidth(0.75F)) {
-                Column(
-                    Modifier
-                        .fillMaxSize()
+                Button(
+                    modifier = Modifier
+                        .size(width = 40.dp, height = 40.dp)
+                        .align(Alignment.End)
                         .padding(1.dp),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Red,
+                        contentColor = Color.Black
+                    ),
+                    onClick = { cells.removeAt(iCell) }
                 ) {
-                    Button(
-                        modifier = Modifier
-                            .size(width = 40.dp, height = 40.dp)
-                            .align(Alignment.End)
-                            .padding(1.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color.Red,
-                            contentColor = Color.Black),
-                        onClick = { cells.removeAt(iCell) }
-                    ) {
-                        Text("X", fontSize = 10.sp)
-                    }
+                    Text("X", fontSize = 10.sp)
                 }
                 block()
-                if (cell is TextCell)
-                {
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(30.dp)
-                            .padding(1.dp),
-                        onClick = { cells += RenderedTextCell( cell.RawText ); cells.removeAt(iCell) },
-                    ) {
-                        Text("Render", fontSize = 10.sp)
-                    }
+            if (cell is TextCell) {
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(30.dp)
+                        .padding(1.dp),
+                    onClick = { cells.removeAt(iCell); cells.add(iCell, RenderedTextCell(cell.RawText)) },
+                ) {
+                    Text("Render", fontSize = 10.sp)
                 }
-                if (cell is RenderedTextCell)
-                {
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(30.dp)
-                            .padding(1.dp),
-                        onClick = { cells += TextCell( cell.RawText ); cells.removeAt(iCell) },
-                    ) {
-                        Text("Edit", fontSize = 10.sp)
-                    }
+            }
+            if (cell is RenderedTextCell) {
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(30.dp)
+                        .padding(1.dp),
+                    onClick = { cells.removeAt(iCell); cells.add(iCell, TextCell(cell.RawText)) },
+                ) {
+                    Text("Edit", fontSize = 10.sp)
                 }
+            }
 
                 Row(
                 ) {
@@ -116,7 +109,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
                             .fillMaxWidth(0.5f)
                             .height(30.dp)
                             .padding(1.dp),
-                        onClick = { cells += TextCell() },
+                        onClick = { cells.add(iCell+1, TextCell()) },
                     ) {
                         Text("Add text", fontSize = 10.sp)
                     }
@@ -126,7 +119,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
                             .fillMaxWidth()
                             .height(30.dp)
                             .padding(1.dp),
-                        onClick = { cells += SketchCell() },
+                        onClick = { cells.add(iCell+1, SketchCell()) },
                     ) {
                         Text("Add sketch", fontSize = 10.sp)
                     }

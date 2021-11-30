@@ -38,9 +38,6 @@ interface Cell {
 abstract class AbstractCell : Cell {
     @Composable
     protected fun cell(block: @Composable () -> Unit) {
-        // TODO border rectangle #5
-        // TODO remove cell button #2
-
         Surface(shape = MaterialTheme.shapes.large, elevation = 2.dp) {
             block()
         }

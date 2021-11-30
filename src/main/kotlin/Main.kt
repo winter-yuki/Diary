@@ -3,51 +3,60 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import org.jetbrains.skija.paragraph.TextBox
-import androidx.compose.foundation.HorizontalScrollbar
-import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Text
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.WindowState
-import androidx.compose.ui.window.singleWindowApplication
+import androidx.compose.material.TextButton
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.sp
+import java.awt.FileDialog
 
 @Composable
-fun AnnotatedClickableText() {
-    val annotatedText = buildAnnotatedString {
-        append("Click ")
-        pushStringAnnotation(tag = "tag", annotation = "annotation")
-        withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)
-        ) { append("here") }
+private fun MenuButton(text: String, onClick: () -> Unit) {
+    TextButton(
+        onClick = onClick,
+        modifier = Modifier.wrapContentSize()
+    ) {
+        Text(text, fontSize = 13.sp)
     }
+}
 
-    ClickableText(
-        text = annotatedText,
-        onClick = { println("Clicked") }
+@Composable
+private fun Menu(tm: TabManager) {
+    var wrongFileTypeDialog by makeErrorDialog(
+        title = "Wrong file type",
+        text = "Only PDF and Diary files are supported"
     )
+    Row {
+        MenuButton("New") {
+            val notes = Notes(TextCell())
+            tm.add(NotesTab(notes))
+        }
+        MenuButton("Open") {
+            val path = callFileExplorer("Select File to Open") ?: return@MenuButton
+            when (FileType.of(path)) {
+                FileType.Diary -> NotesTab(Notes.from(path))
+                else -> null.also {
+                    wrongFileTypeDialog = true
+                }
+            }?.let { tab -> tm.add(tab) }
+        }
+        MenuButton("Save") {
+            val path = callFileExplorer(
+                title = "Select File Path",
+                mode = FileDialog.SAVE
+            ) ?: return@MenuButton
+            println(path.toString())
+            // TODO
+        }
+    }
+}
+
+@Composable
+fun WorkSpace(tm: TabManager) {
+    tm()
 }
 
 fun main() = application {
@@ -61,23 +70,30 @@ fun main() = application {
         ),
         onCloseRequest = ::exitApplication
     ) {
+        // TODO drug-n-drop cells from one screen to another #16
+        val tm = TabManager()
         DesktopMaterialTheme {
-            // TODO context menu: save notes, load notes #13
-            // TODO main menu #14
-            // TODO double notes screen  #15
-            // TODO drug-n-drop cells from one screen to another #16
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Ctrl+Tab для переключения между ячейками вперед")
-                Text("Shift+Tab для переключения между ячейками назад")
-                Notes(
-                    List(10) { i ->
-                        if (i % 2 == 0) TextCell()
-                        else SketchCell()
-                    }
-                )()
+            Column {
+                Menu(tm)
+                WorkSpace(tm)
             }
+//        DesktopMaterialTheme {
+//            // TODO context menu: save notes, load notes #13
+//            // TODO main menu #14
+//            // TODO double notes screen  #15
+//            // TODO drug-n-drop cells from one screen to another #16
+//            Column(
+//                modifier = Modifier.fillMaxWidth()
+//            ) {
+//                Text("Ctrl+Tab для переключения между ячейками вперед")
+//                Text("Shift+Tab для переключения между ячейками назад")
+//                Notes(
+//                    List(3) { i ->
+//                        if (i % 2 == 0) TextCell()
+//                        else SketchCell()
+//                    }
+//                )()
+//            }
         }
     }
 }
