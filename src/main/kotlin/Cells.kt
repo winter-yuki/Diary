@@ -24,11 +24,18 @@ interface Cell {
     @Composable
     operator fun invoke(notes: Notes)
 
+    companion object {
+        fun of(path: Path): Cell {
+            TODO()
+        }
+    }
+}
+
+abstract class AbstractCell : Cell {
     @Composable
-    fun cell(notes: Notes, block: @Composable () -> Unit) {
+    protected fun cell(notes: Notes, block: @Composable () -> Unit) {
         // TODO border rectangle #5
         // TODO remove cell button #2
-        println("width")
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -38,15 +45,9 @@ interface Cell {
             }
         }
     }
-
-    companion object {
-        fun of(path: Path): Cell {
-            TODO()
-        }
-    }
 }
 
-class TextCell : Cell {
+class TextCell : AbstractCell() {
     override fun save(path: Path) {
         TODO("Not yet implemented") // #7
     }
@@ -61,7 +62,6 @@ class TextCell : Cell {
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(250.dp)
                 .padding(vertical = 10.dp),
             value = text.value,
             singleLine = false,
@@ -70,7 +70,7 @@ class TextCell : Cell {
     }
 }
 
-class SketchCell : Cell {
+class SketchCell : AbstractCell() {
     override fun save(path: Path) {
         TODO("Not yet implemented") // #8
     }
