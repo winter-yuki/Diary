@@ -53,21 +53,8 @@ fun main() = application {
         ),
         onCloseRequest = ::exitApplication
     ) {
-        // TODO menu: save notes, load notes #13
         // TODO drug-n-drop cells from one screen to another #16
-
-        val notes = Notes(
-            List(10) { i ->
-                if (i % 2 == 0) TextCell()
-                else SketchCell()
-            }
-        )
-
-        val tm = TabManager(
-            NotesTab(notes),
-            NotesTab(notes),
-        )
-
+        val tm = TabManager()
         DesktopMaterialTheme {
             Column {
                 Menu(tm)
