@@ -57,7 +57,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
                     state = state
                 ) {
                     itemsIndexed(cells) { i, cell ->
-                        CellBox(i) { cell() }
+                        CellBox(i, cell) { cell() }
                     }
                 }
             }
@@ -74,7 +74,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
     }
 
     @Composable
-    private fun CellBox(iCell: Int, block: @Composable () -> Unit) {
+    private fun CellBox(iCell: Int, cell: Cell, block: @Composable () -> Unit) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth().fillMaxHeight()
@@ -100,6 +100,17 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
                     }
                     CellButton("Add sketch") {
                         cells.add(iCell + 1, SketchCell())
+                    }
+                    // TODO refactor
+                    when (cell) {
+                        is TextCell -> CellButton("Render") {
+                            cells.removeAt(iCell)
+                            cells.add(iCell, RenderedTextCell(cell.text))
+                        }
+                        is RenderedTextCell -> CellButton("Edit") {
+                            cells.removeAt(iCell)
+                            cells.add(iCell, TextCell(cell.text))
+                        }
                     }
                 }
             }
