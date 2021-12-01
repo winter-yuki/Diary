@@ -4,26 +4,40 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
+import diary.ui.tabs.Tab
 import diary.utils.forEachIndexedCo
+import diary.utils.makeAlertDialog
 
-// TODO add remove tab button
-class Tab(private val space: UIElem) : UIElem by space
+class TabManager(
+    private val tabs: MutableList<Tab> = mutableStateListOf()
+) : UIComponent {
 
-class TabManager(private val tabs: SnapshotStateList<Tab> = mutableStateListOf()) {
-
-    constructor(vararg tabs: Tab) : this(tabs.toMutableList().toMutableStateList())
+    val linkBuffer = LinkBuffer()
+    private var tooManyTabsDialog = mutableStateOf(false)
+    private val maxNTabs = 4
 
     fun add(tab: Tab) {
-        tabs += tab
+        if (tabs.size < 4) {
+            tabs += tab
+        } else {
+            tooManyTabsDialog.value = true
+        }
     }
 
+    operator fun get(id: Tab.Id): Tab? =
+        tabs.find { it.id == id }
+
     @Composable
-    operator fun invoke() {
+    override operator fun invoke() {
+        makeAlertDialog(
+            title = "Too many tabs opened",
+            text = "No more then $maxNTabs can be opened at once",
+            state = tooManyTabsDialog
+        )
         if (tabs.isEmpty()) {
             EmptyTab()
             return

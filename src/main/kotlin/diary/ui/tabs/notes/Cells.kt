@@ -1,4 +1,4 @@
-package diary.spaces.notes
+package diary.ui.tabs.notes
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -22,11 +22,13 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import diary.ui.UIElem
+import diary.ui.UIComponent
 import java.nio.file.Path
 import kotlin.io.path.writeText
 
-interface Cell : UIElem {
+class CellName(val name: String)
+
+interface Cell : UIComponent {
     fun save(path: Path)
 
     companion object {

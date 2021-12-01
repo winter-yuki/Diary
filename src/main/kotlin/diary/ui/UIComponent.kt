@@ -2,7 +2,7 @@ package diary.ui
 
 import androidx.compose.runtime.Composable
 
-interface UIElem {
+interface UIComponent {
     @Composable
     operator fun invoke()
 }

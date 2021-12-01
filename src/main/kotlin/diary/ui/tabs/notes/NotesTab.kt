@@ -1,4 +1,4 @@
-package diary.spaces.notes
+package diary.ui.tabs.notes
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.VerticalScrollbar
@@ -13,27 +13,37 @@ import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import diary.ui.UIElem
+import diary.ui.Link
+import diary.ui.TabManager
+import diary.ui.tabs.Tab
 import diary.utils.callFileExplorer
+import diary.utils.removeIfExists
 import java.awt.FileDialog
 import java.nio.file.Files.createDirectory
 import java.nio.file.Path
 import kotlin.io.path.createFile
-import kotlin.io.path.deleteExisting
-import kotlin.io.path.exists
-import kotlin.io.path.isDirectory
 
-class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
+class NotesTab(
+    private val cells: SnapshotStateList<Cell> = mutableStateListOf(),
+    private val tabManager: TabManager,
+    var path: Path = Path.of("")
+) : Tab {
 
-    constructor(vararg cells: Cell) : this(cells.toMutableList())
-    constructor(cells: Iterable<Cell>) : this(cells.toMutableList())
-    constructor(cells: MutableList<Cell>) : this(cells.toMutableStateList())
+    // TODO change id to something better: new notes are the same
+    override val id: Tab.Id get() = Tab.Id(path)
+
+    override fun navigate(link: Link) {
+        require(link is NotesLink)
+        println("Notes navigate")
+        // TODO
+    }
 
     @Composable
     override operator fun invoke() {
@@ -56,6 +66,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
                             mode = FileDialog.SAVE
                         )?.let { path ->
                             save(path)
+                            this@NotesTab.path = path
                         }
                     },
                     modifier = Modifier.align(Alignment.End).wrapContentSize()
@@ -140,7 +151,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
     }
 
     private fun save(path: Path) {
-        deleteIfExists(path)
+        path.removeIfExists()
         val diaryPath = Path.of(
             // TODO make Path extension
             if (path.toFile().endsWith(".diary")) path.toString()
@@ -154,30 +165,16 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
         // TODO make zip
     }
 
-    // TODO move to utils
-    // TODO make extension
-    private fun deleteIfExists(path: Path) {
-        if (path.exists()) {
-            delete(path)
-        }
-    }
-
-    // TODO move to utils
-    private fun delete(path: Path) {
-        if (path.isDirectory()) {
-            path.removeAll { true }
-        }
-        path.deleteExisting()
-    }
-
     companion object {
         @OptIn(ExperimentalStdlibApi::class)
-        fun from(path: Path) = Notes(buildList {
-            // TODO make walk extension
-            path.toFile().walk().filter { it.isFile }.sortedBy { it.name }.forEach { file ->
-                // TODO determine cell type
-                add(TextCell(file.readText()))
-            }
-        })
+        fun from(path: Path, tabManager: TabManager) = NotesTab(
+            buildList {
+                path.toFile().walk().filter { it.isFile }.sortedBy { it.name }.forEach { file ->
+                    // TODO determine cell type
+                    add(TextCell(file.readText()))
+                }
+            }.toMutableStateList(),
+            tabManager = tabManager
+        )
     }
 }
