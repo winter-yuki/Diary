@@ -43,7 +43,7 @@ class NotesTab(
 
     @Composable
     override operator fun invoke() {
-        Box(modifier = Modifier.fillMaxSize().padding(10.dp)) {
+        Box(modifier = Modifier.fillMaxSize()) {
             val state = rememberLazyListState()
             if (cells.isEmpty()) {
                 cells += TextCell()
