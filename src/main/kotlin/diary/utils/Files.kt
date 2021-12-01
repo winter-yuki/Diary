@@ -29,7 +29,6 @@ fun callJFileChooser(title: String): Path? {
         dialogTitle = title
         fileFilter = filter
         fileSelectionMode = JFileChooser.FILES_AND_DIRECTORIES
-        showOpenDialog(null)
     }
     return chooser.run {
         val rc = showOpenDialog(null)
