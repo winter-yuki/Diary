@@ -9,35 +9,34 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import diary.spaces.Pdf
-import diary.spaces.notes.Notes
-import diary.spaces.notes.TextCell
+import diary.ui.tabs.notes.NotesTab
+import diary.ui.tabs.pdf.PdfTab
 import diary.utils.FileType
 import diary.utils.callJFileChooser
 import diary.utils.makeAlertDialog
 
 @Composable
-fun TopMenu(tm: TabManager) {
+fun TopMenu(tabManager: TabManager) {
     var wrongFileTypeDialog by makeAlertDialog(
         title = "Wrong file type",
         text = "Only PDF and Diary files are supported"
     )
     Row {
         MenuButton("New") {
-            val notes = Notes(TextCell())
-            tm.add(Tab(notes))
+            val notes = NotesTab(tabManager = tabManager)
+            tabManager.add(notes)
         }
         MenuButton("Open") {
             val path = callJFileChooser("Select File to Open") ?: return@MenuButton
             val space = when (FileType.of(path)) {
-                FileType.Diary -> Notes.from(path)
-                FileType.Pdf -> Pdf.from(path)
+                FileType.Diary -> NotesTab.from(path, tabManager)
+                FileType.Pdf -> PdfTab.from(path, tabManager)
                 else -> {
                     wrongFileTypeDialog = true
                     return@MenuButton
                 }
             }
-            tm.add(Tab(space))
+            tabManager.add(space)
         }
     }
 }
