@@ -1,5 +1,4 @@
 import androidx.compose.desktop.DesktopMaterialTheme
-import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
