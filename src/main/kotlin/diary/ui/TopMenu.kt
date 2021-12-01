@@ -23,7 +23,7 @@ fun TopMenu(tabManager: TabManager) {
     )
     Row {
         MenuButton("New") {
-            val notes = NotesTab(workSpace = tabManager)
+            val notes = NotesTab(tabManager = tabManager)
             tabManager.add(notes)
         }
         MenuButton("Open") {
