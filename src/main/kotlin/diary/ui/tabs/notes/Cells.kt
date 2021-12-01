@@ -120,10 +120,11 @@ class RenderedTextCell(
                 val linkAnnotation = linkedText
                     .getStringAnnotations(start = offset, end = offset)
                     .lastOrNull()?.item ?: return@ClickableText
-                println("Clicked $linkAnnotation")
+                println("Clicked $linkAnnotation") // TODO
                 runNavigate = CellName(linkAnnotation.substring(1))
             }
             if (runNavigate.name.isNotEmpty()) {
+                println("rnNav = ${runNavigate.name}")
                 navigate(runNavigate)
             }
         }

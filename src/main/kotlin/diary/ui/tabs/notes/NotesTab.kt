@@ -45,7 +45,6 @@ class NotesTab(
         if (i != -1) {
             navigateDstName.value = i
         }
-        // TODO
     }
 
     @Composable
@@ -143,6 +142,7 @@ class NotesTab(
                                 iCell,
                                 RenderedTextCell(text = cell.text) {
                                     runBlocking {
+                                        println("Run blocking") // TODO
                                         navigateDstName.value?.let {
                                             state.scrollToItem(it, 0)
                                         }
