@@ -1,9 +1,8 @@
-package diary.spaces.notes
+package diary.ui.tabs.notes
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
@@ -16,41 +15,48 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import diary.ui.UIElem
-import diary.utils.callFileExplorer
-import kotlinx.coroutines.runBlocking
-import java.awt.FileDialog
+import diary.ui.Link
+import diary.ui.TabManager
+import diary.ui.tabs.Tab
+import diary.utils.JFileChooserMode
+import diary.utils.callJFileChooser
+import diary.utils.removeIfExists
 import java.nio.file.Files.createDirectory
 import java.nio.file.Path
-import javax.swing.text.Style
 import kotlin.io.path.createFile
-import kotlin.io.path.deleteExisting
-import kotlin.io.path.exists
-import kotlin.io.path.isDirectory
 
-class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
+class NotesTab(
+    private val cells: SnapshotStateList<Cell> = mutableStateListOf(),
+    private val tabManager: TabManager,
+    var path: Path = Path.of("")
+) : Tab {
 
-    constructor(vararg cells: Cell) : this(cells.toMutableList())
-    constructor(cells: Iterable<Cell>) : this(cells.toMutableList())
-    constructor(cells: MutableList<Cell>) : this(cells.toMutableStateList())
+    // TODO change id to something better: new notes are the same
+    override val id: Tab.Id get() = Tab.Id(path)
+
+    override fun navigate(link: Link) {
+        require(link is NotesLink)
+        println("Notes navigate")
+        // TODO
+    }
 
     @Composable
     override operator fun invoke() {
-        Box(modifier = Modifier.fillMaxSize().padding(10.dp)) {
-            val state = LazyListState() // rememberLazyListState()
+        Box(modifier = Modifier.fillMaxSize()) {
+            val state = rememberLazyListState()
             if (cells.isEmpty()) {
                 cells += TextCell()
             }
             Column {
                 Button(
                     onClick = {
-                        val path = callFileExplorer(
+                        val path = callJFileChooser(
                             title = "Select File Path",
-                            mode = FileDialog.SAVE
+                            mode = JFileChooserMode.Save
                         )?.let { path ->
                             save(path)
+                            this@NotesTab.path = path
                         }
                     },
                     modifier = Modifier.align(Alignment.End).wrapContentSize()
@@ -72,9 +78,6 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
                     scrollState = state
                 )
             )
-
-            Button ( onClick = { runBlocking { state.scrollToItem(0) } } ) { Text("Up") }
-
         }
 
         // TODO move cell up/down buttons #3
@@ -125,17 +128,21 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
                     when (cell) {
                         is TextCell -> CellButton("Render") {
                             cells.removeAt(iCell)
-                            cells.add(iCell, RenderedTextCell( text=cell.text, initName = cell.name ))
+                            cells.add(
+                                iCell,
+                                RenderedTextCell(text = cell.text).apply {
+                                    name = cell.name
+                                }
+                            )
                         }
                         is RenderedTextCell -> CellButton("Edit") {
                             cells.removeAt(iCell)
-
-                            var lls = LazyListState()
-                            runBlocking {
-                                lls.scrollToItem(1, 0)
-                            }
-
-                            cells.add(iCell, TextCell( _text=cell.text, initName = cell.name))
+                            cells.add(
+                                iCell,
+                                TextCell(_text = cell.text).apply {
+                                    name = cell.name
+                                }
+                            )
                         }
                     }
                 }
@@ -156,7 +163,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
     }
 
     private fun save(path: Path) {
-        deleteIfExists(path)
+        path.removeIfExists()
         val diaryPath = Path.of(
             // TODO make Path extension
             if (path.toFile().endsWith(".diary")) path.toString()
@@ -170,30 +177,16 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
         // TODO make zip
     }
 
-    // TODO move to utils
-    // TODO make extension
-    private fun deleteIfExists(path: Path) {
-        if (path.exists()) {
-            delete(path)
-        }
-    }
-
-    // TODO move to utils
-    private fun delete(path: Path) {
-        if (path.isDirectory()) {
-            path.removeAll { true }
-        }
-        path.deleteExisting()
-    }
-
     companion object {
         @OptIn(ExperimentalStdlibApi::class)
-        fun from(path: Path) = Notes(buildList {
-            // TODO make walk extension
-            path.toFile().walk().filter { it.isFile }.sortedBy { it.name }.forEach { file ->
-                // TODO determine cell type
-                add(TextCell(file.readText()))
-            }
-        })
+        fun from(path: Path, tabManager: TabManager) = NotesTab(
+            buildList {
+                path.toFile().walk().filter { it.isFile }.sortedBy { it.name }.forEach { file ->
+                    // TODO determine cell type
+                    add(TextCell(file.readText()))
+                }
+            }.toMutableStateList(),
+            tabManager = tabManager
+        )
     }
 }

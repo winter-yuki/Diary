@@ -1,4 +1,4 @@
-package diary.spaces.notes
+package diary.ui.tabs.notes
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -12,7 +12,6 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -22,12 +21,13 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import diary.ui.UIElem
+import diary.ui.UIComponent
 import java.nio.file.Path
 import kotlin.io.path.writeText
 
-interface Cell : UIElem {
+class CellName(val name: String)
 
+interface Cell : UIComponent {
     var name: String
     fun save(path: Path)
 
@@ -38,7 +38,7 @@ interface Cell : UIElem {
     }
 }
 
-abstract class AbstractCell (override var name: String = "") : Cell {
+abstract class AbstractCell : Cell {
 
     @Composable
     protected fun cell(block: @Composable () -> Unit) {
@@ -54,7 +54,10 @@ abstract class AbstractCell (override var name: String = "") : Cell {
     }
 }
 
-class TextCell(private var _text: String = "", private val initName: String = "") : AbstractCell(name = initName) {
+class TextCell(
+    private var _text: String = "",
+    override var name: String = ""
+) : AbstractCell() {
 
     val text: String get() = _text
 
@@ -78,7 +81,7 @@ class TextCell(private var _text: String = "", private val initName: String = ""
     }
 }
 
-class RenderedTextCell(val text: String = "", private val initName: String = "") : AbstractCell(name = initName) {
+class RenderedTextCell(val text: String = "", override var name: String = "") : AbstractCell() {
 
     override fun save(path: Path) {
         path.writeText(text)
@@ -105,14 +108,6 @@ class RenderedTextCell(val text: String = "", private val initName: String = "")
         }
 
         Column {
-            val AnnostatedText = buildAnnotatedString {
-                pushStringAnnotation(tag = "tag", annotation = "annotation")
-                withStyle(
-                    style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)
-                ) {
-                    append("(empty link)")
-                }
-            }
             ClickableText(
                 modifier = Modifier.fillMaxWidth(),
                 text = linkedText
@@ -125,7 +120,7 @@ class RenderedTextCell(val text: String = "", private val initName: String = "")
     }
 }
 
-class SketchCell (private val initName: String = "") : AbstractCell(name = initName) {
+class SketchCell(private val initName: String = "", override var name: String = "") : AbstractCell() {
     override fun save(path: Path) {
         println("Save sketch $path") // TODO
     }
