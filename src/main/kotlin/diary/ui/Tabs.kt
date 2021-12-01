@@ -1,3 +1,5 @@
+package diary.ui
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -7,24 +9,10 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
+import diary.utils.forEachIndexedCo
 
-interface Tab : UIElem {
-    @Composable
-    override operator fun invoke()
-}
-
-// TODO delegate
-class NotesTab(val notes: Notes) : Tab {
-    @Composable
-    override operator fun invoke() = notes()
-}
-
-class PdfTab : Tab {
-    @Composable
-    override operator fun invoke() {
-        TODO("Not yet implemented")
-    }
-}
+// TODO add remove tab button
+class Tab(private val space: UIElem) : UIElem by space
 
 class TabManager(private val tabs: SnapshotStateList<Tab> = mutableStateListOf()) {
 
