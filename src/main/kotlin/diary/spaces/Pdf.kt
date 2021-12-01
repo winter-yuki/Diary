@@ -59,7 +59,6 @@ class Pdf(doc: PDDocument) : UIElem {
                 }
             }
         }
-        // TODO
     }
 
     // TODO remove borders
