@@ -1,3 +1,5 @@
+package diary.utils
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
@@ -15,11 +17,6 @@ import java.awt.FileDialog
 import java.awt.Frame
 import java.nio.file.Path
 import kotlin.io.path.extension
-
-interface UIElem {
-    @Composable
-    operator fun invoke()
-}
 
 @Composable
 fun <T> Iterable<T>.forEachIndexedCo(block: @Composable (Int, T) -> Unit) {
@@ -67,7 +64,7 @@ enum class FileType {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun makeErrorDialog(title: String, text: String): MutableState<Boolean> {
+fun makeAlertDialog(title: String, text: String): MutableState<Boolean> {
     val delegate = remember { mutableStateOf(false) }
     var open by delegate
     if (open) {

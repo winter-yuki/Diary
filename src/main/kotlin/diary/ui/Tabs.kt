@@ -1,3 +1,5 @@
+package diary.ui
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -7,34 +9,17 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
+import diary.utils.forEachIndexedCo
 
-interface Tab : UIElem {
-    @Composable
-    override operator fun invoke()
-}
+// TODO add remove tab button
+class Tab(private val space: UIElem) : UIElem by space
 
-// TODO delegate
-class NotesTab(val notes: Notes) : Tab {
-    @Composable
-    override operator fun invoke() = notes()
-}
-
-class PdfTab : Tab {
-    @Composable
-    override operator fun invoke() {
-        TODO("Not yet implemented")
-    }
-}
-
-class TabManager(private val _tabs: SnapshotStateList<Tab> = mutableStateListOf()) {
-
-    val tabs: List<Tab>
-        get() = _tabs
+class TabManager(private val tabs: SnapshotStateList<Tab> = mutableStateListOf()) {
 
     constructor(vararg tabs: Tab) : this(tabs.toMutableList().toMutableStateList())
 
     fun add(tab: Tab) {
-        _tabs += tab
+        tabs += tab
     }
 
     @Composable
@@ -44,8 +29,8 @@ class TabManager(private val _tabs: SnapshotStateList<Tab> = mutableStateListOf(
             return
         }
         Row {
-            _tabs.forEachIndexedCo { i, tab ->
-                val fraction = 1F / (_tabs.size - i)
+            tabs.forEachIndexedCo { i, tab ->
+                val fraction = 1F / (tabs.size - i)
                 Box(modifier = Modifier.fillMaxWidth(fraction)) {
                     tab()
                 }

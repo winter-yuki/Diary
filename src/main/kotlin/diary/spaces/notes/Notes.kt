@@ -1,3 +1,5 @@
+package diary.spaces.notes
+
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,19 +15,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import diary.ui.UIElem
+import diary.utils.callFileExplorer
 import java.awt.FileDialog
 import java.nio.file.Files.createDirectory
 import java.nio.file.Path
 import kotlin.io.path.createFile
 
-class Notes(private val cells: SnapshotStateList<Cell>) {
+class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
 
     constructor(vararg cells: Cell) : this(cells.toMutableList())
     constructor(cells: Iterable<Cell>) : this(cells.toMutableList())
     constructor(cells: MutableList<Cell>) : this(cells.toMutableStateList())
 
     @Composable
-    operator fun invoke() {
+    override operator fun invoke() {
         Box(modifier = Modifier.fillMaxSize().padding(10.dp)) {
             val state = rememberLazyListState()
             if (cells.isEmpty()) {

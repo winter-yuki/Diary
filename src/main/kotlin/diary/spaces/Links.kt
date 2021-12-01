@@ -1,3 +1,5 @@
+package diary.spaces
+
 import java.nio.file.Path
 
 interface Link {
