@@ -15,15 +15,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import diary.ui.UIElem
 import java.nio.file.Path
-import kotlin.io.path.writeText
 
-interface Cell {
+interface Cell : UIElem {
     fun save(path: Path)
-    fun load(path: Path): Cell
-
-    @Composable
-    operator fun invoke()
 
     companion object {
         fun of(path: Path): Cell {
@@ -41,19 +37,16 @@ abstract class AbstractCell : Cell {
     }
 }
 
-class TextCell(private var text: String = "") : AbstractCell() {
+class TextCell : AbstractCell() {
 
     override fun save(path: Path) {
-        path.writeText(text)
-    }
-
-    override fun load(path: Path): TextCell {
-        TODO("Not yet implemented") // #7
+        // path.writeText(text)
+        println("Cell.save $path") // TODO
     }
 
     @Composable
     override operator fun invoke() = cell {
-        var text by remember { mutableStateOf(this.text) }
+        var text by remember { mutableStateOf("") }
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
             value = text,
@@ -61,7 +54,6 @@ class TextCell(private var text: String = "") : AbstractCell() {
             onValueChange = {
                 // TODO fix state management
                 text = it
-                this.text = it
             }
         )
     }
@@ -69,11 +61,7 @@ class TextCell(private var text: String = "") : AbstractCell() {
 
 class SketchCell : AbstractCell() {
     override fun save(path: Path) {
-        TODO("Not yet implemented") // #8
-    }
-
-    override fun load(path: Path): SketchCell {
-        TODO("Not yet implemented") // #8
+        println("Save sketch $path") // TODO
     }
 
     @Composable

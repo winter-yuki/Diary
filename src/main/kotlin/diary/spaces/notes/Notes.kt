@@ -18,9 +18,7 @@ import androidx.compose.ui.unit.sp
 import diary.ui.UIElem
 import diary.utils.callFileExplorer
 import java.awt.FileDialog
-import java.nio.file.Files.createDirectory
 import java.nio.file.Path
-import kotlin.io.path.createFile
 
 class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
 
@@ -47,7 +45,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
                     },
                     modifier = Modifier.align(Alignment.End).wrapContentSize()
                 ) {
-                    Text("Save")
+                    Text("Save", fontSize = 10.sp)
                 }
                 LazyColumn(
                     modifier = Modifier.fillMaxSize().padding(end = 12.dp),
@@ -93,10 +91,10 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
 
                 Row {
                     CellButton("Add text") {
-                        cells.add(iCell, TextCell())
+                        cells.add(iCell + 1, TextCell())
                     }
                     CellButton("Add sketch") {
-                        cells.add(iCell, SketchCell())
+                        cells.add(iCell + 1, SketchCell())
                     }
                 }
             }
@@ -115,22 +113,25 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
         }
     }
 
-    fun save(path: Path) {
-        val dir = createDirectory(path)
-        cells.forEachIndexed { i, cell ->
-            val file = Path.of(dir.toString(), "$i.cell").createFile()
-            cell.save(file)
-        }
+    private fun save(path: Path) {
+        // TODO add .diary
+        println("Save notes $path")
+//        val dir = createDirectory(path)
+//        cells.forEachIndexed { i, cell ->
+//            val file = Path.of(dir.toString(), "$i.cell").createFile()
+//            cell.save(file)
+//        }
         // TODO zip
     }
 
     companion object {
         @OptIn(ExperimentalStdlibApi::class)
         fun from(path: Path) = Notes(buildList {
-            path.toFile().walk().filter { it.isFile }.sortedBy { it.name }.forEach { file ->
-                println("file = $file")
-                add(TextCell(file.readText()))
-            }
+            println("read notes from $path")
+//            path.toFile().walk().filter { it.isFile }.sortedBy { it.name }.forEach { file ->
+//                println("file = $file")
+//                add(TextCell(file.readText()))
+//            }
         })
     }
 }
