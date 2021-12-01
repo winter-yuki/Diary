@@ -1,4 +1,4 @@
-package diary.spaces
+package diary.ui.spaces
 
 import androidx.compose.foundation.ExperimentalDesktopApi
 import androidx.compose.foundation.Image
@@ -12,13 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeBitmap
 import androidx.compose.ui.unit.dp
-import diary.ui.UIElem
+import diary.ui.UIComponent
+import diary.ui.WorkSpace
 import diary.utils.makeAlertDialog
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.rendering.PDFRenderer
 import java.nio.file.Path
 
-class Pdf(doc: PDDocument) : UIElem {
+class PdfSpace(doc: PDDocument, private val workSpace: WorkSpace) : UIComponent {
 
     private val renderer: PDFRenderer = PDFRenderer(doc)
     private var _currPage: Int = 0
@@ -86,11 +87,12 @@ class Pdf(doc: PDDocument) : UIElem {
         }
     }
 
-    // TODO remove borders
+    // TODO remove extra padding
     private fun render(): ImageBitmap =
         renderer.renderImage(currPage).toComposeBitmap()
 
     companion object {
-        fun from(path: Path) = Pdf(PDDocument.load(path.toFile()))
+        fun from(path: Path, workSpace: WorkSpace) =
+            PdfSpace(PDDocument.load(path.toFile()), workSpace = workSpace)
     }
 }

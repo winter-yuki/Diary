@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import diary.ui.TabManager
 import diary.ui.TopMenu
 import diary.ui.WorkSpace
 
@@ -21,12 +20,11 @@ fun main() = application {
         ),
         onCloseRequest = ::exitApplication
     ) {
-        // TODO drug-n-drop cells from one screen to another #16
-        val tm = TabManager()
+        val workSpace = WorkSpace()
         DesktopMaterialTheme {
             Column {
-                TopMenu(tm)
-                WorkSpace(tm)
+                TopMenu(workSpace)
+                workSpace()
             }
         }
     }

@@ -1,4 +1,4 @@
-package diary.spaces.notes
+package diary.ui.spaces.notes
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
@@ -9,27 +9,26 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import diary.ui.UIElem
+import diary.ui.UIComponent
+import diary.ui.WorkSpace
 import diary.utils.callFileExplorer
+import diary.utils.removeIfExists
 import java.awt.FileDialog
 import java.nio.file.Files.createDirectory
 import java.nio.file.Path
 import kotlin.io.path.createFile
-import kotlin.io.path.deleteExisting
-import kotlin.io.path.exists
-import kotlin.io.path.isDirectory
 
-class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
-
-    constructor(vararg cells: Cell) : this(cells.toMutableList())
-    constructor(cells: Iterable<Cell>) : this(cells.toMutableList())
-    constructor(cells: MutableList<Cell>) : this(cells.toMutableStateList())
+class NotesSpace(
+    private val cells: SnapshotStateList<Cell> = mutableStateListOf(),
+    private val workSpace: WorkSpace
+) : UIComponent {
 
     @Composable
     override operator fun invoke() {
@@ -130,7 +129,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
     }
 
     private fun save(path: Path) {
-        deleteIfExists(path)
+        path.removeIfExists()
         val diaryPath = Path.of(
             // TODO make Path extension
             if (path.toFile().endsWith(".diary")) path.toString()
@@ -144,30 +143,16 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
         // TODO make zip
     }
 
-    // TODO move to utils
-    // TODO make extension
-    private fun deleteIfExists(path: Path) {
-        if (path.exists()) {
-            delete(path)
-        }
-    }
-
-    // TODO move to utils
-    private fun delete(path: Path) {
-        if (path.isDirectory()) {
-            path.removeAll { true }
-        }
-        path.deleteExisting()
-    }
-
     companion object {
         @OptIn(ExperimentalStdlibApi::class)
-        fun from(path: Path) = Notes(buildList {
-            // TODO make walk extension
-            path.toFile().walk().filter { it.isFile }.sortedBy { it.name }.forEach { file ->
-                // TODO determine cell type
-                add(TextCell(file.readText()))
-            }
-        })
+        fun from(path: Path, workSpace: WorkSpace) = NotesSpace(
+            buildList {
+                path.toFile().walk().filter { it.isFile }.sortedBy { it.name }.forEach { file ->
+                    // TODO determine cell type
+                    add(TextCell(file.readText()))
+                }
+            }.toMutableStateList(),
+            workSpace = workSpace
+        )
     }
 }

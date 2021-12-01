@@ -3,6 +3,7 @@ package diary.utils
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
@@ -13,12 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.awt.FileDialog
-import java.awt.Frame
-import java.nio.file.Path
-import javax.swing.JFileChooser
-import javax.swing.filechooser.FileNameExtensionFilter
-import kotlin.io.path.extension
 
 @Composable
 fun <T> Iterable<T>.forEachIndexedCo(block: @Composable (Int, T) -> Unit) {
@@ -41,50 +36,13 @@ fun <T> forEachCo(vararg ts: T, block: @Composable (T) -> Unit) {
     }
 }
 
-typealias FileDialogMode = Int
-
-fun callFileExplorer(title: String, mode: FileDialogMode = FileDialog.LOAD): Path? =
-    FileDialog(Frame(), title).apply {
-        this.mode = mode
-        isVisible = true
-    }.run {
-        if (directory == null || file == null) null
-        else Path.of(directory, file)
-    }
-
-fun callJFileChooser(title: String): Path? {
-    val filter = FileNameExtensionFilter(
-        "Diary & PDF Files", "diary", "pdf"
-    )
-    val chooser = JFileChooser().apply {
-        dialogTitle = title
-        fileFilter = filter
-        fileSelectionMode = JFileChooser.FILES_AND_DIRECTORIES
-        showOpenDialog(null)
-    }
-    return chooser.run {
-        val rc = showOpenDialog(null)
-        if (rc != JFileChooser.APPROVE_OPTION) null
-        else selectedFile.toPath()
-    }
-}
-
-enum class FileType {
-    Unknown, Diary, Pdf;
-
-    companion object {
-        fun of(path: Path): FileType = when (path.extension) {
-            "diary" -> Diary
-            "pdf" -> Pdf
-            else -> Unknown
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun makeAlertDialog(title: String, text: String): MutableState<Boolean> {
-    val delegate = remember { mutableStateOf(false) }
+fun makeAlertDialog(
+    title: String, text: String,
+    state: MutableState<Boolean>? = null
+): MutableState<Boolean> {
+    val delegate = remember { state ?: mutableStateOf(false) }
     var open by delegate
     if (open) {
         AlertDialog(
@@ -105,7 +63,7 @@ fun makeAlertDialog(title: String, text: String): MutableState<Boolean> {
                     }
                 }
             },
-            modifier = Modifier.width(200.dp)
+            modifier = Modifier.width(350.dp).wrapContentHeight()
         )
     }
     return delegate
