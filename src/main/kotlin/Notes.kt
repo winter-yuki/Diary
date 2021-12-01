@@ -12,6 +12,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -75,29 +76,28 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
                     Text("X", fontSize = 10.sp)
                 }
                 block()
-            if (cell is TextCell) {
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(30.dp)
-                        .padding(1.dp),
-                    onClick = { cells.removeAt(iCell); cells.add(iCell, RenderedTextCell(cell.RawText)) },
-                ) {
-                    Text("Render", fontSize = 10.sp)
+                if (cell is TextCell) {
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(30.dp)
+                            .padding(1.dp),
+                        onClick = { cells.removeAt(iCell); cells.add(iCell, RenderedTextCell(cell.RawText)) },
+                    ) {
+                        Text("Render", fontSize = 10.sp)
+                    }
                 }
-            }
-            if (cell is RenderedTextCell) {
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(30.dp)
-                        .padding(1.dp),
-                    onClick = { cells.removeAt(iCell); cells.add(iCell, TextCell(cell.RawText)) },
-                ) {
-                    Text("Edit", fontSize = 10.sp)
+                if (cell is RenderedTextCell) {
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(30.dp)
+                            .padding(1.dp),
+                        onClick = { cells.removeAt(iCell); cells.add(iCell, TextCell(cell.RawText)) },
+                    ) {
+                        Text("Edit", fontSize = 10.sp)
+                    }
                 }
-            }
-
                 Row(
                 ) {
 
@@ -107,7 +107,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
                             .fillMaxWidth(0.5f)
                             .height(30.dp)
                             .padding(1.dp),
-                        onClick = { cells.add(iCell+1, TextCell()) },
+                        onClick = { cells.add(iCell + 1, TextCell()) },
                     ) {
                         Text("Add text", fontSize = 10.sp)
                     }
@@ -117,7 +117,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
                             .fillMaxWidth()
                             .height(30.dp)
                             .padding(1.dp),
-                        onClick = { cells.add(iCell+1, SketchCell()) },
+                        onClick = { cells.add(iCell + 1, SketchCell()) },
                     ) {
                         Text("Add sketch", fontSize = 10.sp)
                     }

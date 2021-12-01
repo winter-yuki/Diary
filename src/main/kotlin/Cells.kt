@@ -1,4 +1,5 @@
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
@@ -78,30 +79,17 @@ class RenderedTextCell(public val RawText: String = "") : AbstractCell() {
 
     @Composable
     override operator fun invoke() = cell {
-
         var AnnostatedText = buildAnnotatedString {
-            append(RawText)
             pushStringAnnotation(tag = "tag", annotation = "annotation")
             withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)
-            ) { append("link") }
+            ) { append("(empty link)") }
         }
-
         Column() {
-//            Text(ClickableText)
+            Text(RawText)
             ClickableText(
                 text = AnnostatedText,
-                onClick = { println("Clicked") }
+                onClick = { println("Clicked") },
             )
-            Button(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .fillMaxWidth()
-                    .height(30.dp)
-                    .padding(1.dp),
-                onClick = { },
-            ) {
-                Text("Render", fontSize = 10.sp)
-            }
         }
     }
 }
