@@ -54,7 +54,7 @@ fun callFileExplorer(title: String, mode: FileDialogMode = FileDialog.LOAD): Pat
 
 fun callJFileChooser(title: String): Path? {
     val filter = FileNameExtensionFilter(
-        "Diary & PDF Files", ".diary", ".pdf"
+        "Diary & PDF Files", "diary", "pdf"
     )
     val chooser = JFileChooser().apply {
         dialogTitle = title
