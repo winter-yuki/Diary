@@ -1,4 +1,4 @@
-package diary.ui.spaces.pdf
+package diary.ui.tabs.pdf
 
 import androidx.compose.foundation.ExperimentalDesktopApi
 import androidx.compose.foundation.Image
@@ -13,25 +13,25 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeBitmap
 import androidx.compose.ui.unit.dp
 import diary.ui.Link
-import diary.ui.WorkSpace
-import diary.ui.spaces.Space
+import diary.ui.TabManager
+import diary.ui.tabs.Tab
 import diary.utils.makeAlertDialog
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.rendering.PDFRenderer
 import java.nio.file.Path
 
-class PdfSpace(
+class PdfTab(
     doc: PDDocument,
-    private val workSpace: WorkSpace,
+    private val tabManager: TabManager,
     private val path: Path,
     currPage: Int = 0
-) : Space {
+) : Tab {
 
     private val renderer: PDFRenderer = PDFRenderer(doc)
     private var _currPage = mutableStateOf(currPage)
     val currPage: Int get() = _currPage.value
     private val nPages: Int = doc.numberOfPages
-    override val id: Space.Id by lazy { Space.Id(path) }
+    override val id: Tab.Id by lazy { Tab.Id(path) }
 
     override fun navigate(link: Link) {
         require(link is PdfLink)
@@ -57,7 +57,7 @@ class PdfSpace(
                         .align(Alignment.CenterHorizontally)
                         .mouseClickable {
                             if (buttons.isSecondaryPressed) {
-                                workSpace.linkBuffer.link = PdfLink(path, currPage)
+                                tabManager.linkBuffer.link = PdfLink(path, currPage)
                                 linkCreatedDialog = true
                             }
                         }
@@ -105,10 +105,10 @@ class PdfSpace(
         renderer.renderImage(currPage).toComposeBitmap()
 
     companion object {
-        fun from(path: Path, workSpace: WorkSpace, currPage: Int = 0) =
-            PdfSpace(
+        fun from(path: Path, tabManager: TabManager, currPage: Int = 0) =
+            PdfTab(
                 PDDocument.load(path.toFile()),
-                workSpace = workSpace,
+                tabManager = tabManager,
                 currPage = currPage,
                 path = path
             )

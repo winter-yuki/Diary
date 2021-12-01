@@ -1,21 +1,21 @@
 package diary.ui
 
-import diary.ui.spaces.Space
+import diary.ui.tabs.Tab
 
 interface Link {
-    val id: Space.Id
-    fun navigate(workSpace: WorkSpace)
+    val id: Tab.Id
+    fun navigate(tabManager: TabManager)
 }
 
 abstract class AbstractLink : Link {
-    protected fun navigateOrCreate(workSpace: WorkSpace, block: () -> Space) {
-        val space = workSpace[id]
-        if (space != null) {
-            space.navigate(this)
+    protected fun navigateOrCreate(tabManager: TabManager, block: () -> Tab) {
+        val tab = tabManager[id]
+        if (tab != null) {
+            tab.navigate(this)
         } else {
-            val newSpace = block()
-            workSpace.add(newSpace)
-            newSpace.navigate(this)
+            val newTab = block()
+            tabManager.add(newTab)
+            newTab.navigate(this)
         }
     }
 }

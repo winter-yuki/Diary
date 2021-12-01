@@ -1,4 +1,4 @@
-package diary.ui.spaces.notes
+package diary.ui.tabs.notes
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
@@ -17,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import diary.ui.Link
-import diary.ui.WorkSpace
-import diary.ui.spaces.Space
+import diary.ui.TabManager
+import diary.ui.tabs.Tab
 import diary.utils.callFileExplorer
 import diary.utils.removeIfExists
 import java.awt.FileDialog
@@ -26,14 +26,14 @@ import java.nio.file.Files.createDirectory
 import java.nio.file.Path
 import kotlin.io.path.createFile
 
-class NotesSpace(
+class NotesTab(
     private val cells: SnapshotStateList<Cell> = mutableStateListOf(),
-    private val workSpace: WorkSpace,
+    private val tabManager: TabManager,
     var path: Path = Path.of("")
-) : Space {
+) : Tab {
 
     // TODO change id to something better: new notes are the same
-    override val id: Space.Id get() = Space.Id(path)
+    override val id: Tab.Id get() = Tab.Id(path)
 
     override fun navigate(link: Link) {
         require(link is NotesLink)
@@ -56,7 +56,7 @@ class NotesSpace(
                             mode = FileDialog.SAVE
                         )?.let { path ->
                             save(path)
-                            this@NotesSpace.path = path
+                            this@NotesTab.path = path
                         }
                     },
                     modifier = Modifier.align(Alignment.End).wrapContentSize()
@@ -157,14 +157,14 @@ class NotesSpace(
 
     companion object {
         @OptIn(ExperimentalStdlibApi::class)
-        fun from(path: Path, workSpace: WorkSpace) = NotesSpace(
+        fun from(path: Path, tabManager: TabManager) = NotesTab(
             buildList {
                 path.toFile().walk().filter { it.isFile }.sortedBy { it.name }.forEach { file ->
                     // TODO determine cell type
                     add(TextCell(file.readText()))
                 }
             }.toMutableStateList(),
-            workSpace = workSpace
+            tabManager = tabManager
         )
     }
 }

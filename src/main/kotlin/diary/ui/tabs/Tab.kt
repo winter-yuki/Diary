@@ -1,10 +1,10 @@
-package diary.ui.spaces
+package diary.ui.tabs
 
 import diary.ui.Link
 import diary.ui.UIComponent
 import java.nio.file.Path
 
-interface Space : UIComponent {
+interface Tab : UIComponent {
 
     data class Id(val id: Path)
 

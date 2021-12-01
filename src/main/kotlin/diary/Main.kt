@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
+import diary.ui.TabManager
 import diary.ui.TopMenu
-import diary.ui.WorkSpace
 
 fun main() = application {
     Window(
@@ -20,11 +20,11 @@ fun main() = application {
         ),
         onCloseRequest = ::exitApplication
     ) {
-        val workSpace = WorkSpace()
+        val tabManager = TabManager()
         DesktopMaterialTheme {
             Column {
-                TopMenu(workSpace)
-                workSpace()
+                TopMenu(tabManager)
+                tabManager()
             }
         }
     }

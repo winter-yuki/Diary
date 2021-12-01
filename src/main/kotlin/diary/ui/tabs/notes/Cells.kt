@@ -1,4 +1,4 @@
-package diary.ui.spaces.notes
+package diary.ui.tabs.notes
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures

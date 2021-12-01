@@ -8,28 +8,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import diary.ui.spaces.Space
+import diary.ui.tabs.Tab
 import diary.utils.forEachIndexedCo
 import diary.utils.makeAlertDialog
 
-class WorkSpace(
-    private val spaces: MutableList<Space> = mutableStateListOf()
+class TabManager(
+    private val tabs: MutableList<Tab> = mutableStateListOf()
 ) : UIComponent {
 
     val linkBuffer = LinkBuffer()
     private var tooManyTabsDialog = mutableStateOf(false)
     private val maxNTabs = 4
 
-    fun add(space: Space) {
-        if (spaces.size < 4) {
-            spaces += space
+    fun add(tab: Tab) {
+        if (tabs.size < 4) {
+            tabs += tab
         } else {
             tooManyTabsDialog.value = true
         }
     }
 
-    operator fun get(id: Space.Id): Space? =
-        spaces.find { it.id == id }
+    operator fun get(id: Tab.Id): Tab? =
+        tabs.find { it.id == id }
 
     @Composable
     override operator fun invoke() {
@@ -38,13 +38,13 @@ class WorkSpace(
             text = "No more then $maxNTabs can be opened at once",
             state = tooManyTabsDialog
         )
-        if (spaces.isEmpty()) {
+        if (tabs.isEmpty()) {
             EmptyTab()
             return
         }
         Row {
-            spaces.forEachIndexedCo { i, tab ->
-                val fraction = 1F / (spaces.size - i)
+            tabs.forEachIndexedCo { i, tab ->
+                val fraction = 1F / (tabs.size - i)
                 Box(modifier = Modifier.fillMaxWidth(fraction)) {
                     tab()
                 }
