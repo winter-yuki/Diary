@@ -1,12 +1,16 @@
 package diary.spaces.notes
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -33,7 +37,13 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
 
     @Composable
     override operator fun invoke() {
-        Box(modifier = Modifier.fillMaxSize().padding(10.dp)) {
+        Box(
+            modifier = Modifier.fillMaxSize().padding(10.dp)
+                .border(
+                    border = BorderStroke(1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)),
+                    shape = RoundedCornerShape(1)
+                )
+        ) {
             val state = rememberLazyListState()
             if (cells.isEmpty()) {
                 cells += TextCell()
