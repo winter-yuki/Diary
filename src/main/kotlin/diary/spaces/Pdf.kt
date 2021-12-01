@@ -1,7 +1,9 @@
 package diary.spaces
 
+import androidx.compose.foundation.ExperimentalDesktopApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.mouseClickable
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.*
@@ -11,6 +13,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeBitmap
 import androidx.compose.ui.unit.dp
 import diary.ui.UIElem
+import diary.utils.makeAlertDialog
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.rendering.PDFRenderer
 import java.nio.file.Path
@@ -22,9 +25,14 @@ class Pdf(doc: PDDocument) : UIElem {
     val currPage: Int get() = _currPage
     private val nPages: Int = doc.numberOfPages
 
+    @OptIn(ExperimentalDesktopApi::class)
     @Composable
     override fun invoke() {
         Box(modifier = Modifier.fillMaxSize().padding(10.dp)) {
+            var linkCreatedDialog by makeAlertDialog(
+                title = "Link created!",
+                text = "Link created and now you can add it to your notes"
+            )
             var image by remember { mutableStateOf(render()) }
             Column(modifier = Modifier.fillMaxSize()) {
                 Image(
@@ -33,6 +41,12 @@ class Pdf(doc: PDDocument) : UIElem {
                     modifier = Modifier
                         .fillMaxHeight(0.95F)
                         .align(Alignment.CenterHorizontally)
+                        .mouseClickable {
+                            if (buttons.isSecondaryPressed) {
+                                linkCreatedDialog = true
+                                // TODO
+                            }
+                        }
                 )
                 Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                     TextButton(
