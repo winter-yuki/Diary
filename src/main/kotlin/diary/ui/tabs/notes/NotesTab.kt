@@ -3,6 +3,7 @@ package diary.ui.tabs.notes
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
@@ -22,6 +23,7 @@ import diary.ui.tabs.Tab
 import diary.utils.JFileChooserMode
 import diary.utils.callJFileChooser
 import diary.utils.removeIfExists
+import kotlinx.coroutines.runBlocking
 import java.nio.file.Files.createDirectory
 import java.nio.file.Path
 import kotlin.io.path.createFile
@@ -34,10 +36,15 @@ class NotesTab(
 
     // TODO change id to something better: new notes are the same
     override val id: Tab.Id get() = Tab.Id(path)
+    private val navigateDstName = mutableStateOf<Int?>(null)
 
     override fun navigate(link: Link) {
         require(link is NotesLink)
-        println("Notes navigate")
+        val i = cells.indexOfFirst { it.name == link.cellName?.name }
+        println("i = $i") // TODO
+        if (i != -1) {
+            navigateDstName.value = i
+        }
         // TODO
     }
 
@@ -68,7 +75,7 @@ class NotesTab(
                     state = state
                 ) {
                     itemsIndexed(cells) { i, cell ->
-                        CellBox(i, cell) { cell() }
+                        CellBox(i, cell, state = state) { cell() }
                     }
                 }
             }
@@ -85,7 +92,10 @@ class NotesTab(
     }
 
     @Composable
-    private fun CellBox(iCell: Int, cell: Cell, label: String = "", block: @Composable () -> Unit) {
+    private fun CellBox(
+        iCell: Int, cell: Cell, label: String = "",
+        state: LazyListState, block: @Composable () -> Unit
+    ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth().fillMaxHeight()
@@ -103,6 +113,7 @@ class NotesTab(
                     onClick = { cells.removeAt(iCell) }
                 ) {}
 
+                // TODO mb move to cell and make cell name immutable
                 var text by remember { mutableStateOf(label) }
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(0.5f).fillMaxHeight(0.1f),
@@ -130,7 +141,13 @@ class NotesTab(
                             cells.removeAt(iCell)
                             cells.add(
                                 iCell,
-                                RenderedTextCell(text = cell.text).apply {
+                                RenderedTextCell(text = cell.text) {
+                                    runBlocking {
+                                        navigateDstName.value?.let {
+                                            state.scrollToItem(it, 0)
+                                        }
+                                    }
+                                }.apply {
                                     name = cell.name
                                 }
                             )

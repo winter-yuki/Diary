@@ -81,7 +81,11 @@ class TextCell(
     }
 }
 
-class RenderedTextCell(val text: String = "", override var name: String = "") : AbstractCell() {
+class RenderedTextCell(
+    val text: String = "",
+    override var name: String = "",
+    private val navigate: @Composable (CellName) -> Unit
+) : AbstractCell() {
 
     override fun save(path: Path) {
         path.writeText(text)
@@ -108,13 +112,19 @@ class RenderedTextCell(val text: String = "", override var name: String = "") : 
         }
 
         Column {
+            var runNavigate by remember { mutableStateOf(CellName("")) }
             ClickableText(
                 modifier = Modifier.fillMaxWidth(),
                 text = linkedText
             ) { offset ->
-                val linkAnnotation =
-                    linkedText.getStringAnnotations(start = offset, end = offset).lastOrNull()?.item
+                val linkAnnotation = linkedText
+                    .getStringAnnotations(start = offset, end = offset)
+                    .lastOrNull()?.item ?: return@ClickableText
                 println("Clicked $linkAnnotation")
+                runNavigate = CellName(linkAnnotation.substring(1))
+            }
+            if (runNavigate.name.isNotEmpty()) {
+                navigate(runNavigate)
             }
         }
     }
