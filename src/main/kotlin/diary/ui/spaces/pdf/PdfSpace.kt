@@ -22,6 +22,7 @@ import java.nio.file.Path
 class PdfSpace(
     doc: PDDocument,
     private val workSpace: WorkSpace,
+    private val path: Path,
     currPage: Int = 0
 ) : UIComponent {
 
@@ -48,8 +49,8 @@ class PdfSpace(
                         .align(Alignment.CenterHorizontally)
                         .mouseClickable {
                             if (buttons.isSecondaryPressed) {
+                                workSpace.linkBuffer.link = PdfLink(path, currPage)
                                 linkCreatedDialog = true
-                                // TODO
                             }
                         }
                 )
@@ -100,7 +101,8 @@ class PdfSpace(
             PdfSpace(
                 PDDocument.load(path.toFile()),
                 workSpace = workSpace,
-                currPage = currPage
+                currPage = currPage,
+                path = path
             )
     }
 }
