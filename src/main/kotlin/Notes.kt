@@ -5,15 +5,19 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.nio.file.Path
+
 
 class Notes(private val cells: SnapshotStateList<Cell>) {
 
@@ -26,15 +30,16 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
         if (cells.isEmpty()) {
             cells += TextCell()
         }
-        Box(modifier = Modifier.fillMaxSize().padding(10.dp)) {
+        Box(modifier = Modifier.fillMaxSize().padding(10.dp))
+        {
             val state = rememberLazyListState()
-            Column {
+            Column() {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize().padding(end = 12.dp),
                     state = state
                 ) {
                     itemsIndexed(cells) { i, cell ->
-                        CellBox(i) { cell() }
+                        CellBox(i, cell) { cell() }
                     }
                 }
             }
@@ -51,43 +56,70 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
     }
 
     @Composable
-    private fun CellBox(iCell: Int, block: @Composable () -> Unit) {
+    private fun CellBox(iCell: Int, cell: Cell, block: @Composable () -> Unit) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth().fillMaxHeight()
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(vertical = 4.dp)
-                    .fillMaxWidth(0.75F)
-            ) {
+            Column(modifier = Modifier.padding(vertical = 4.dp).fillMaxWidth(0.75F)) {
                 Button(
                     modifier = Modifier
-                        .padding(5.dp)
-                        .size(width = 30.dp, height = 25.dp)
-                        .align(Alignment.End),
+                        .size(width = 40.dp, height = 40.dp)
+                        .align(Alignment.End)
+                        .padding(1.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Red,
+                        contentColor = Color.Black
+                    ),
                     onClick = { cells.removeAt(iCell) }
-                ) {}
-
+                ) {
+                    Text("X", fontSize = 10.sp)
+                }
                 block()
+                if (cell is TextCell) {
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(30.dp)
+                            .padding(1.dp),
+                        onClick = { cells.removeAt(iCell); cells.add(iCell, RenderedTextCell(cell.RawText)) },
+                    ) {
+                        Text("Render", fontSize = 10.sp)
+                    }
+                }
+                if (cell is RenderedTextCell) {
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(30.dp)
+                            .padding(1.dp),
+                        onClick = { cells.removeAt(iCell); cells.add(iCell, TextCell(cell.RawText)) },
+                    ) {
+                        Text("Edit", fontSize = 10.sp)
+                    }
+                }
+                Row(
+                ) {
 
-                Row {
-                    val size = 10.sp
                     Button(
                         modifier = Modifier
                             .wrapContentSize()
-                            .padding(10.dp),
-                        onClick = { cells.add(iCell, TextCell()) },
+                            .fillMaxWidth(0.5f)
+                            .height(30.dp)
+                            .padding(1.dp),
+                        onClick = { cells.add(iCell + 1, TextCell()) },
                     ) {
-                        Text("Add text", fontSize = size)
+                        Text("Add text", fontSize = 10.sp)
                     }
                     Button(
                         modifier = Modifier
                             .wrapContentSize()
-                            .padding(10.dp),
-                        onClick = { cells.add(iCell, SketchCell()) },
+                            .fillMaxWidth()
+                            .height(30.dp)
+                            .padding(1.dp),
+                        onClick = { cells.add(iCell + 1, SketchCell()) },
                     ) {
-                        Text("Add sketch", fontSize = size)
+                        Text("Add sketch", fontSize = 10.sp)
                     }
                 }
             }
@@ -100,8 +132,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
 
     companion object {
         fun from(path: Path): Notes {
-            // TODO
-            return Notes()
+            TODO()
         }
     }
 }
