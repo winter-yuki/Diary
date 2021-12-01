@@ -12,6 +12,7 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -26,6 +27,8 @@ import java.nio.file.Path
 import kotlin.io.path.writeText
 
 interface Cell : UIElem {
+
+    var name: String
     fun save(path: Path)
 
     companion object {
@@ -35,7 +38,8 @@ interface Cell : UIElem {
     }
 }
 
-abstract class AbstractCell : Cell {
+abstract class AbstractCell (override var name: String = "") : Cell {
+
     @Composable
     protected fun cell(block: @Composable () -> Unit) {
         Surface(shape = MaterialTheme.shapes.large, elevation = 2.dp) {
@@ -50,7 +54,7 @@ abstract class AbstractCell : Cell {
     }
 }
 
-class TextCell(private var _text: String = "") : AbstractCell() {
+class TextCell(private var _text: String = "", private val initName: String = "") : AbstractCell(name = initName) {
 
     val text: String get() = _text
 
@@ -74,7 +78,7 @@ class TextCell(private var _text: String = "") : AbstractCell() {
     }
 }
 
-class RenderedTextCell(val text: String = "") : AbstractCell() {
+class RenderedTextCell(val text: String = "", private val initName: String = "") : AbstractCell(name = initName) {
 
     override fun save(path: Path) {
         path.writeText(text)
@@ -121,7 +125,7 @@ class RenderedTextCell(val text: String = "") : AbstractCell() {
     }
 }
 
-class SketchCell : AbstractCell() {
+class SketchCell (private val initName: String = "") : AbstractCell(name = initName) {
     override fun save(path: Path) {
         println("Save sketch $path") // TODO
     }

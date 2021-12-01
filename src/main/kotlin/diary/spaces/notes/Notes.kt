@@ -3,23 +3,28 @@ package diary.spaces.notes
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Button
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import diary.ui.UIElem
 import diary.utils.callFileExplorer
+import kotlinx.coroutines.runBlocking
 import java.awt.FileDialog
 import java.nio.file.Files.createDirectory
 import java.nio.file.Path
+import javax.swing.text.Style
 import kotlin.io.path.createFile
 import kotlin.io.path.deleteExisting
 import kotlin.io.path.exists
@@ -34,7 +39,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
     @Composable
     override operator fun invoke() {
         Box(modifier = Modifier.fillMaxSize().padding(10.dp)) {
-            val state = rememberLazyListState()
+            val state = LazyListState() // rememberLazyListState()
             if (cells.isEmpty()) {
                 cells += TextCell()
             }
@@ -67,6 +72,9 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
                     scrollState = state
                 )
             )
+
+            Button ( onClick = { runBlocking { state.scrollToItem(0) } } ) { Text("Up") }
+
         }
 
         // TODO move cell up/down buttons #3
@@ -74,7 +82,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
     }
 
     @Composable
-    private fun CellBox(iCell: Int, cell: Cell, block: @Composable () -> Unit) {
+    private fun CellBox(iCell: Int, cell: Cell, label: String = "", block: @Composable () -> Unit) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth().fillMaxHeight()
@@ -92,6 +100,18 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
                     onClick = { cells.removeAt(iCell) }
                 ) {}
 
+                var text by remember { mutableStateOf(label) }
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(0.5f).fillMaxHeight(0.1f),
+                    value = text,
+                    textStyle = TextStyle(fontSize = 10.sp),
+                    singleLine = true,
+                    onValueChange = {
+                        text = it
+                        cell.name = it
+                    }
+                )
+
                 block()
 
                 Row {
@@ -105,11 +125,17 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
                     when (cell) {
                         is TextCell -> CellButton("Render") {
                             cells.removeAt(iCell)
-                            cells.add(iCell, RenderedTextCell(cell.text))
+                            cells.add(iCell, RenderedTextCell( text=cell.text, initName = cell.name ))
                         }
                         is RenderedTextCell -> CellButton("Edit") {
                             cells.removeAt(iCell)
-                            cells.add(iCell, TextCell(cell.text))
+
+                            var lls = LazyListState()
+                            runBlocking {
+                                lls.scrollToItem(1, 0)
+                            }
+
+                            cells.add(iCell, TextCell( _text=cell.text, initName = cell.name))
                         }
                     }
                 }
