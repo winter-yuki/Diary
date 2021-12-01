@@ -47,7 +47,7 @@ abstract class AbstractCell : Cell {
     }
 }
 
-class TextCell(public var RawText: String = "") : AbstractCell() {
+class TextCell(public var rawText: String = "") : AbstractCell() {
     override fun save(path: Path) {
         TODO("Not yet implemented") // #7
     }
@@ -58,17 +58,17 @@ class TextCell(public var RawText: String = "") : AbstractCell() {
 
     @Composable
     override operator fun invoke() = cell {
-        var text by remember { mutableStateOf(RawText) }
+        var text by remember { mutableStateOf(rawText) }
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
             value = text,
             singleLine = false,
-            onValueChange = { text = it; RawText = it },
+            onValueChange = { text = it; rawText = it },
         )
     }
 }
 
-class RenderedTextCell(public val RawText: String = "") : AbstractCell() {
+class RenderedTextCell(public val rawText: String = "") : AbstractCell() {
     override fun save(path: Path) {
         TODO("Not yet implemented") // #7
     }
@@ -79,30 +79,32 @@ class RenderedTextCell(public val RawText: String = "") : AbstractCell() {
 
     @Composable
     override operator fun invoke() = cell {
-        val link_regex = Regex("""#[a-zA-Z]+\S""")
-        val matches = link_regex.findAll(RawText)
-        println(matches.map{ it.groupValues }.joinToString())
+        val linkRegex = Regex("""#[a-zA-Z]+\S""")
+        val matches = linkRegex.findAll(rawText)
 
-        val LinkedText = buildAnnotatedString {
-            append(RawText)
-            append("\n\nLinks:")
-            for ( match in matches ) {
+        val linkedText = buildAnnotatedString {
+            var cursor = 0
+            for (match in matches) {
+                append(rawText.substring(cursor until match.range.first))
+
                 pushStringAnnotation(tag = match.value, annotation = match.value)
                 withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)) {
-                    append(" ${match.value}")
+                    append(match.value)
                 }
+                cursor = match.range.last + 1
             }
+            append(rawText.substring(cursor))
         }
 
         Column() {
             ClickableText(
-                text = LinkedText,
-                onClick = {
-                        offset ->
-                    var annotation = LinkedText.getStringAnnotations(start = offset, end = offset).lastOrNull()?.item
-                    println("Clicked ${annotation}")
-                }
-            )
+                modifier = Modifier.fillMaxWidth(),
+                text = linkedText
+            ) { offset ->
+                val linkAnnotation =
+                    linkedText.getStringAnnotations(start = offset, end = offset).lastOrNull()?.item
+                println("Clicked $linkAnnotation")
+            }
 
 
         }

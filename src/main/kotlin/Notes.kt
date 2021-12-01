@@ -82,7 +82,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
                             .fillMaxWidth()
                             .height(30.dp)
                             .padding(1.dp),
-                        onClick = { cells.removeAt(iCell); cells.add(iCell, RenderedTextCell(cell.RawText)) },
+                        onClick = { cells.removeAt(iCell); cells.add(iCell, RenderedTextCell(cell.rawText)) },
                     ) {
                         Text("Render", fontSize = 10.sp)
                     }
@@ -93,7 +93,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
                             .fillMaxWidth()
                             .height(30.dp)
                             .padding(1.dp),
-                        onClick = { cells.removeAt(iCell); cells.add(iCell, TextCell(cell.RawText)) },
+                        onClick = { cells.removeAt(iCell); cells.add(iCell, TextCell(cell.rawText)) },
                     ) {
                         Text("Edit", fontSize = 10.sp)
                     }
