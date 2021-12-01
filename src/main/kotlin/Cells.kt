@@ -85,15 +85,12 @@ class RenderedTextCell(public val RawText: String = "") : AbstractCell() {
 
         val LinkedText = buildAnnotatedString {
             append(RawText)
-            append(" ")
-            pushStringAnnotation(tag = "link 1", annotation = "annotation 1")
-            withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)) {
-                append("link 1")
-            }
-            append(" ")
-            pushStringAnnotation(tag = "link 2", annotation = "annotation 2")
-            withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)) {
-                append("link 2")
+            append("\n\nLinks:")
+            for ( match in matches ) {
+                pushStringAnnotation(tag = match.value, annotation = match.value)
+                withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)) {
+                    append(" ${match.value}")
+                }
             }
         }
 
