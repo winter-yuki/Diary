@@ -18,7 +18,12 @@ import androidx.compose.ui.unit.sp
 import diary.ui.UIElem
 import diary.utils.callFileExplorer
 import java.awt.FileDialog
+import java.nio.file.Files.createDirectory
 import java.nio.file.Path
+import kotlin.io.path.createFile
+import kotlin.io.path.deleteExisting
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 
 class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
 
@@ -114,24 +119,45 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
     }
 
     private fun save(path: Path) {
-        // TODO add .diary
-        println("Save notes $path")
-//        val dir = createDirectory(path)
-//        cells.forEachIndexed { i, cell ->
-//            val file = Path.of(dir.toString(), "$i.cell").createFile()
-//            cell.save(file)
-//        }
-        // TODO zip
+        deleteIfExists(path)
+        val diaryPath = Path.of(
+            // TODO make Path extension
+            if (path.toFile().endsWith(".diary")) path.toString()
+            else "$path.diary"
+        )
+        val dir = createDirectory(diaryPath)
+        cells.forEachIndexed { i, cell ->
+            val file = Path.of(dir.toString(), "$i.cell").createFile()
+            cell.save(file)
+        }
+        // TODO make zip
+    }
+
+    // TODO move to utils
+    // TODO make extension
+    private fun deleteIfExists(path: Path) {
+        if (path.exists()) {
+            delete(path)
+        }
+    }
+
+    // TODO move to utils
+    private fun delete(path: Path) {
+        if (path.isDirectory()) {
+            path.removeAll { true }
+        }
+        path.deleteExisting()
     }
 
     companion object {
         @OptIn(ExperimentalStdlibApi::class)
         fun from(path: Path) = Notes(buildList {
             println("read notes from $path")
-//            path.toFile().walk().filter { it.isFile }.sortedBy { it.name }.forEach { file ->
-//                println("file = $file")
-//                add(TextCell(file.readText()))
-//            }
+            // TODO make walk extension
+            path.toFile().walk().filter { it.isFile }.sortedBy { it.name }.forEach { file ->
+                println("file = $file") // TODO
+                add(TextCell()) // TODO read text
+            }
         })
     }
 }
