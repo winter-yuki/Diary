@@ -21,17 +21,28 @@ fun callFileExplorer(title: String, mode: FileDialogMode = FileDialog.LOAD): Pat
         else Path.of(directory, file)
     }
 
-fun callJFileChooser(title: String): Path? {
-    val filter = FileNameExtensionFilter(
-        "Diary & PDF Files", "diary", "pdf"
-    )
+enum class JFileChooserMode {
+    Open, Save
+}
+
+fun callJFileChooser(title: String, mode: JFileChooserMode = JFileChooserMode.Open): Path? {
     val chooser = JFileChooser().apply {
         dialogTitle = title
-        fileFilter = filter
+        fileFilter = when (mode) {
+            JFileChooserMode.Open -> FileNameExtensionFilter(
+                "Diary & PDF Files", "diary", "pdf"
+            )
+            JFileChooserMode.Save -> FileNameExtensionFilter(
+                "Diary Files", "diary"
+            )
+        }
         fileSelectionMode = JFileChooser.FILES_AND_DIRECTORIES
     }
     return chooser.run {
-        val rc = showOpenDialog(null)
+        val rc = when (mode) {
+            JFileChooserMode.Open -> showOpenDialog(null)
+            JFileChooserMode.Save -> showSaveDialog(null)
+        }
         if (rc != JFileChooser.APPROVE_OPTION) null
         else selectedFile.toPath()
     }

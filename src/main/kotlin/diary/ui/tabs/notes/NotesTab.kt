@@ -19,9 +19,9 @@ import androidx.compose.ui.unit.sp
 import diary.ui.Link
 import diary.ui.TabManager
 import diary.ui.tabs.Tab
-import diary.utils.callFileExplorer
+import diary.utils.JFileChooserMode
+import diary.utils.callJFileChooser
 import diary.utils.removeIfExists
-import java.awt.FileDialog
 import java.nio.file.Files.createDirectory
 import java.nio.file.Path
 import kotlin.io.path.createFile
@@ -51,9 +51,9 @@ class NotesTab(
             Column {
                 Button(
                     onClick = {
-                        val path = callFileExplorer(
+                        val path = callJFileChooser(
                             title = "Select File Path",
-                            mode = FileDialog.SAVE
+                            mode = JFileChooserMode.Save
                         )?.let { path ->
                             save(path)
                             this@NotesTab.path = path
