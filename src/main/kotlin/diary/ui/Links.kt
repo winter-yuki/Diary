@@ -8,12 +8,12 @@ interface Link {
 }
 
 abstract class AbstractLink : Link {
-    protected fun navigateOrCreate(tabManager: TabManager, block: () -> Tab) {
+    protected fun navigateOrCreate(tabManager: TabManager, createTab: () -> Tab) {
         val tab = tabManager[id]
         if (tab != null) {
             tab.navigate(this)
         } else {
-            val newTab = block()
+            val newTab = createTab()
             tabManager.add(newTab)
             newTab.navigate(this)
         }
