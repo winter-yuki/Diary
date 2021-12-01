@@ -152,10 +152,9 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
     companion object {
         @OptIn(ExperimentalStdlibApi::class)
         fun from(path: Path) = Notes(buildList {
-            println("read notes from $path")
             // TODO make walk extension
             path.toFile().walk().filter { it.isFile }.sortedBy { it.name }.forEach { file ->
-                println("file = $file") // TODO
+                // TODO determine cell type
                 add(TextCell(file.readText()))
             }
         })

@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.sp
 import java.awt.FileDialog
 import java.awt.Frame
 import java.nio.file.Path
+import javax.swing.JFileChooser
+import javax.swing.filechooser.FileNameExtensionFilter
 import kotlin.io.path.extension
 
 @Composable
@@ -49,6 +51,23 @@ fun callFileExplorer(title: String, mode: FileDialogMode = FileDialog.LOAD): Pat
         if (directory == null || file == null) null
         else Path.of(directory, file)
     }
+
+fun callJFileChooser(title: String): Path? {
+    val filter = FileNameExtensionFilter(
+        "Diary & PDF Files", ".diary", ".pdf"
+    )
+    val chooser = JFileChooser().apply {
+        dialogTitle = title
+        fileFilter = filter
+        fileSelectionMode = JFileChooser.FILES_AND_DIRECTORIES
+        showOpenDialog(null)
+    }
+    return chooser.run {
+        val rc = showOpenDialog(null)
+        if (rc != JFileChooser.APPROVE_OPTION) null
+        else selectedFile.toPath()
+    }
+}
 
 enum class FileType {
     Unknown, Diary, Pdf;

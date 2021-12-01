@@ -13,7 +13,7 @@ import diary.spaces.Pdf
 import diary.spaces.notes.Notes
 import diary.spaces.notes.TextCell
 import diary.utils.FileType
-import diary.utils.callFileExplorer
+import diary.utils.callJFileChooser
 import diary.utils.makeAlertDialog
 
 @Composable
@@ -28,7 +28,7 @@ fun TopMenu(tm: TabManager) {
             tm.add(Tab(notes))
         }
         MenuButton("Open") {
-            val path = callFileExplorer("Select File to Open") ?: return@MenuButton
+            val path = callJFileChooser("Select File to Open") ?: return@MenuButton
             val space = when (FileType.of(path)) {
                 FileType.Diary -> Notes.from(path)
                 FileType.Pdf -> Pdf.from(path)
