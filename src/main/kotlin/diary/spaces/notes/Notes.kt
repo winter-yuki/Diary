@@ -69,7 +69,6 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
             )
         }
 
-        // TODO move cell up/down buttons #3
         // TODO show buttons only on focus #4
     }
 
@@ -92,7 +91,37 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
                     onClick = { cells.removeAt(iCell) }
                 ) {}
 
-                block()
+                Row() {
+                    Box(modifier = Modifier.fillMaxWidth(0.9f)) {
+                        block()
+                    }
+                    Column {
+                        Button(
+                            onClick = {
+                                if (iCell > 0) {
+                                    cells.removeAt(iCell)
+                                    when (cell) {
+                                        is TextCell -> cells.add(iCell - 1, TextCell(cell.text))
+                                        is RenderedTextCell -> cells.add(iCell - 1, RenderedTextCell(cell.text))
+                                        is SketchCell -> cells.add(iCell - 1, SketchCell())
+                                    }
+                                }
+                            }
+                        ) { Text("⇧") }
+                        Button(
+                            onClick = {
+                                if (iCell < cells.size) {
+                                    cells.removeAt(iCell)
+                                    when (cell) {
+                                        is TextCell -> cells.add(iCell + 1, TextCell(cell.text))
+                                        is RenderedTextCell -> cells.add(iCell + 1, RenderedTextCell(cell.text))
+                                        is SketchCell -> cells.add(iCell + 1, SketchCell())
+                                    }
+                                }
+                            }
+                        ) { Text("⇩") }
+                    }
+                }
 
                 Row {
                     CellButton("Add text") {

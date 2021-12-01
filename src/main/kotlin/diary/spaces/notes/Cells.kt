@@ -50,9 +50,7 @@ abstract class AbstractCell : Cell {
     }
 }
 
-class TextCell(private var _text: String = "") : AbstractCell() {
-
-    val text: String get() = _text
+class TextCell(var text: String = "") : AbstractCell() {
 
     override fun save(path: Path) {
         path.writeText(text)
@@ -60,15 +58,15 @@ class TextCell(private var _text: String = "") : AbstractCell() {
 
     @Composable
     override operator fun invoke() = cell {
-        var text by remember { mutableStateOf(_text) }
+        var curText by remember { mutableStateOf(text) }
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-            value = text,
+            value = curText,
             singleLine = false,
             onValueChange = {
                 // TODO fix state management
+                curText = it
                 text = it
-                _text = it
             }
         )
     }
