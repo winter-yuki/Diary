@@ -79,17 +79,35 @@ class RenderedTextCell(public val RawText: String = "") : AbstractCell() {
 
     @Composable
     override operator fun invoke() = cell {
-        var AnnostatedText = buildAnnotatedString {
-            pushStringAnnotation(tag = "tag", annotation = "annotation")
-            withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)
-            ) { append("(empty link)") }
+        val link_regex = Regex("""#[a-zA-Z]+\S""")
+        val matches = link_regex.findAll(RawText)
+        println(matches.map{ it.groupValues }.joinToString())
+
+        val LinkedText = buildAnnotatedString {
+            append(RawText)
+            append(" ")
+            pushStringAnnotation(tag = "link 1", annotation = "annotation 1")
+            withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)) {
+                append("link 1")
+            }
+            append(" ")
+            pushStringAnnotation(tag = "link 2", annotation = "annotation 2")
+            withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)) {
+                append("link 2")
+            }
         }
+
         Column() {
-            Text(RawText)
             ClickableText(
-                text = AnnostatedText,
-                onClick = { println("Clicked") },
+                text = LinkedText,
+                onClick = {
+                        offset ->
+                    var annotation = LinkedText.getStringAnnotations(start = offset, end = offset).lastOrNull()?.item
+                    println("Clicked ${annotation}")
+                }
             )
+
+
         }
     }
 }
