@@ -19,7 +19,6 @@ import java.nio.file.Path
 
 interface Cell {
     fun save(path: Path)
-
     fun load(path: Path): Cell
 
     @Composable
@@ -60,7 +59,7 @@ class TextCell(public var RawText: String = "") : AbstractCell() {
     override operator fun invoke() = cell {
         var text by remember { mutableStateOf(RawText) }
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
             value = text,
             singleLine = false,
             onValueChange = { text = it; RawText = it },
