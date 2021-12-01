@@ -26,7 +26,7 @@ class TabManager(
     private val maxNTabs = 4
 
     fun add(tab: Tab) {
-        if (tabs.size < 4) {
+        if (tabs.size < maxNTabs) {
             tabs += tab
         } else {
             tooManyTabsDialog.value = true
