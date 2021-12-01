@@ -1,6 +1,4 @@
-package diary.ui.spaces
-
-import diary.ui.WorkSpace
+package diary.ui
 
 interface Link {
     fun jump(workSpace: WorkSpace)
@@ -8,9 +6,7 @@ interface Link {
 
 class LinkBuffer(var link: Link? = null)
 
-//interface Link {
-//    fun jump()
-//}
+
 //
 //class PdfLink private constructor(
 //    private val path: Path, private val anchor: Nothing

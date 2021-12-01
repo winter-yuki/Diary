@@ -1,4 +1,4 @@
-package diary.ui.spaces
+package diary.ui.spaces.pdf
 
 import androidx.compose.foundation.ExperimentalDesktopApi
 import androidx.compose.foundation.Image
@@ -19,10 +19,14 @@ import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.rendering.PDFRenderer
 import java.nio.file.Path
 
-class PdfSpace(doc: PDDocument, private val workSpace: WorkSpace) : UIComponent {
+class PdfSpace(
+    doc: PDDocument,
+    private val workSpace: WorkSpace,
+    currPage: Int = 0
+) : UIComponent {
 
     private val renderer: PDFRenderer = PDFRenderer(doc)
-    private var _currPage: Int = 0
+    private var _currPage: Int = currPage
     val currPage: Int get() = _currPage
     private val nPages: Int = doc.numberOfPages
 
@@ -92,7 +96,11 @@ class PdfSpace(doc: PDDocument, private val workSpace: WorkSpace) : UIComponent 
         renderer.renderImage(currPage).toComposeBitmap()
 
     companion object {
-        fun from(path: Path, workSpace: WorkSpace) =
-            PdfSpace(PDDocument.load(path.toFile()), workSpace = workSpace)
+        fun from(path: Path, workSpace: WorkSpace, currPage: Int = 0) =
+            PdfSpace(
+                PDDocument.load(path.toFile()),
+                workSpace = workSpace,
+                currPage = currPage
+            )
     }
 }

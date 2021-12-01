@@ -8,7 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import diary.ui.spaces.LinkBuffer
 import diary.utils.forEachIndexedCo
 import diary.utils.makeAlertDialog
 
