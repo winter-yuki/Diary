@@ -14,7 +14,7 @@ abstract class AbstractLink : Link {
             space.navigate(this)
         } else {
             val newSpace = block()
-            workSpace.add(Tab(newSpace))
+            workSpace.add(newSpace)
             newSpace.navigate(this)
         }
     }

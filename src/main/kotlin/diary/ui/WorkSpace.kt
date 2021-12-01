@@ -12,26 +12,24 @@ import diary.ui.spaces.Space
 import diary.utils.forEachIndexedCo
 import diary.utils.makeAlertDialog
 
-class Tab(val space: Space) : UIComponent by space
-
 class WorkSpace(
-    private val tabs: MutableList<Tab> = mutableStateListOf()
+    private val spaces: MutableList<Space> = mutableStateListOf()
 ) : UIComponent {
 
     val linkBuffer = LinkBuffer()
     private var tooManyTabsDialog = mutableStateOf(false)
     private val maxNTabs = 4
 
-    fun add(tab: Tab) {
-        if (tabs.size < 4) {
-            tabs += tab
+    fun add(space: Space) {
+        if (spaces.size < 4) {
+            spaces += space
         } else {
             tooManyTabsDialog.value = true
         }
     }
 
     operator fun get(id: Space.Id): Space? =
-        tabs.find { it.space.id == id }?.space
+        spaces.find { it.id == id }
 
     @Composable
     override operator fun invoke() {
@@ -40,13 +38,13 @@ class WorkSpace(
             text = "No more then $maxNTabs can be opened at once",
             state = tooManyTabsDialog
         )
-        if (tabs.isEmpty()) {
+        if (spaces.isEmpty()) {
             EmptyTab()
             return
         }
         Row {
-            tabs.forEachIndexedCo { i, tab ->
-                val fraction = 1F / (tabs.size - i)
+            spaces.forEachIndexedCo { i, tab ->
+                val fraction = 1F / (spaces.size - i)
                 Box(modifier = Modifier.fillMaxWidth(fraction)) {
                     tab()
                 }

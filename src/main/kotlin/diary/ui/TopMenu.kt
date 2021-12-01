@@ -24,7 +24,7 @@ fun TopMenu(workSpace: WorkSpace) {
     Row {
         MenuButton("New") {
             val notes = NotesSpace(workSpace = workSpace)
-            workSpace.add(Tab(notes))
+            workSpace.add(notes)
         }
         MenuButton("Open") {
             val path = callJFileChooser("Select File to Open") ?: return@MenuButton
@@ -36,7 +36,7 @@ fun TopMenu(workSpace: WorkSpace) {
                     return@MenuButton
                 }
             }
-            workSpace.add(Tab(space))
+            workSpace.add(space)
         }
     }
 }
