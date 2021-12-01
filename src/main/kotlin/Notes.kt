@@ -52,42 +52,56 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
 
     @Composable
     private fun CellBox(iCell: Int, block: @Composable () -> Unit) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Row(
             modifier = Modifier.fillMaxWidth().fillMaxHeight()
         ) {
+
             Column(
-                modifier = Modifier
-                    .padding(vertical = 4.dp)
-                    .fillMaxWidth(0.75F)
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth().fillMaxHeight()
             ) {
-                Button(
+                Column(
                     modifier = Modifier
-                        .padding(5.dp)
-                        .size(width = 30.dp, height = 25.dp)
-                        .align(Alignment.End),
-                    onClick = { cells.removeAt(iCell) }
-                ) {}
-
-                block()
-
-                Row {
-                    val size = 10.sp
+                        .padding(vertical = 4.dp)
+                        .fillMaxWidth(0.75F)
+                ) {
                     Button(
                         modifier = Modifier
-                            .wrapContentSize()
-                            .padding(10.dp),
-                        onClick = { cells.add(iCell, TextCell()) },
-                    ) {
-                        Text("Add text", fontSize = size)
+                            .padding(5.dp)
+                            .size(width = 30.dp, height = 25.dp)
+                            .align(Alignment.End),
+                        onClick = { cells.removeAt(iCell) }
+                    ) {}
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Box(modifier = Modifier.align(Alignment.CenterVertically)) {
+                            Text((iCell + 1).toString() + ".")
+                        }
+                        block()
                     }
-                    Button(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .padding(10.dp),
-                        onClick = { cells.add(iCell, SketchCell()) },
+
+
+                    Row(
+                        modifier = Modifier.padding(start = 16.dp)
+
                     ) {
-                        Text("Add sketch", fontSize = size)
+                        val size = 10.sp
+                        Button(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .padding(10.dp),
+                            onClick = { cells.add(iCell, TextCell()) },
+                        ) {
+                            Text("Add text", fontSize = size)
+                        }
+                        Button(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .padding(10.dp),
+                            onClick = { cells.add(iCell, SketchCell()) },
+                        ) {
+                            Text("Add sketch", fontSize = size)
+                        }
                     }
                 }
             }
