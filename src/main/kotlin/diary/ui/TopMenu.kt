@@ -9,8 +9,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import diary.ui.spaces.pdf.PdfSpace
 import diary.ui.spaces.notes.NotesSpace
+import diary.ui.spaces.pdf.PdfSpace
 import diary.utils.FileType
 import diary.utils.callJFileChooser
 import diary.utils.makeAlertDialog

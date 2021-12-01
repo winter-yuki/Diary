@@ -12,8 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeBitmap
 import androidx.compose.ui.unit.dp
-import diary.ui.UIComponent
+import diary.ui.Link
 import diary.ui.WorkSpace
+import diary.ui.spaces.Space
 import diary.utils.makeAlertDialog
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.rendering.PDFRenderer
@@ -24,12 +25,18 @@ class PdfSpace(
     private val workSpace: WorkSpace,
     private val path: Path,
     currPage: Int = 0
-) : UIComponent {
+) : Space {
 
     private val renderer: PDFRenderer = PDFRenderer(doc)
-    private var _currPage: Int = currPage
-    val currPage: Int get() = _currPage
+    private var _currPage = mutableStateOf(currPage)
+    val currPage: Int get() = _currPage.value
     private val nPages: Int = doc.numberOfPages
+    override val id: Space.Id by lazy { Space.Id(path) }
+
+    override fun navigate(link: Link) {
+        require(link is PdfLink)
+        _currPage.value = link.page ?: 0
+    }
 
     @OptIn(ExperimentalDesktopApi::class)
     @Composable
@@ -40,6 +47,7 @@ class PdfSpace(
                 text = "Link created and now you can add it to your notes"
             )
             var image by remember { mutableStateOf(render()) }
+            var currPage by remember { _currPage }
             Column(modifier = Modifier.fillMaxSize()) {
                 Image(
                     image,
@@ -58,7 +66,7 @@ class PdfSpace(
                     TextButton(
                         onClick = {
                             if (currPage > 0) {
-                                _currPage--
+                                currPage--
                                 image = render()
                             }
                         },
@@ -77,7 +85,7 @@ class PdfSpace(
                     TextButton(
                         onClick = {
                             if (currPage + 1 < nPages) {
-                                _currPage++
+                                currPage++
                                 image = render()
                             }
                         },

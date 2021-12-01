@@ -1,17 +1,18 @@
 package diary.ui.spaces.notes
 
-import diary.ui.Link
-import diary.ui.Tab
+import diary.ui.AbstractLink
 import diary.ui.WorkSpace
+import diary.ui.spaces.Space
 import java.nio.file.Path
 
 data class NotesLink(
     val path: Path,
     val cellName: CellName? = null
-) : Link {
-    override fun jump(workSpace: WorkSpace) {
-        val notes = NotesSpace.from(path, workSpace)
-        workSpace.add(Tab(notes))
-        // TODO navigate to cell
+) : AbstractLink() {
+
+    override val id: Space.Id by lazy { Space.Id(path) }
+
+    override fun navigate(workSpace: WorkSpace) = navigateOrCreate(workSpace) {
+        NotesSpace.from(path, workSpace)
     }
 }

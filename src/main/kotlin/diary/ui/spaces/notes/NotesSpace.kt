@@ -16,8 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import diary.ui.UIComponent
+import diary.ui.Link
 import diary.ui.WorkSpace
+import diary.ui.spaces.Space
 import diary.utils.callFileExplorer
 import diary.utils.removeIfExists
 import java.awt.FileDialog
@@ -27,8 +28,18 @@ import kotlin.io.path.createFile
 
 class NotesSpace(
     private val cells: SnapshotStateList<Cell> = mutableStateListOf(),
-    private val workSpace: WorkSpace
-) : UIComponent {
+    private val workSpace: WorkSpace,
+    var path: Path = Path.of("")
+) : Space {
+
+    // TODO change id to something better: new notes are the same
+    override val id: Space.Id get() = Space.Id(path)
+
+    override fun navigate(link: Link) {
+        require(link is NotesLink)
+        println("Notes navigate")
+        // TODO
+    }
 
     @Composable
     override operator fun invoke() {
@@ -45,6 +56,7 @@ class NotesSpace(
                             mode = FileDialog.SAVE
                         )?.let { path ->
                             save(path)
+                            this@NotesSpace.path = path
                         }
                     },
                     modifier = Modifier.align(Alignment.End).wrapContentSize()

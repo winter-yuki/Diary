@@ -1,20 +1,22 @@
 package diary.ui.spaces.pdf
 
-import diary.ui.Link
-import diary.ui.Tab
+import diary.ui.AbstractLink
 import diary.ui.WorkSpace
+import diary.ui.spaces.Space
 import java.nio.file.Path
 
 data class PdfLink(
     val path: Path,
     val page: Int? = null
-) : Link {
-    override fun jump(workSpace: WorkSpace) {
-        val pdf = PdfSpace.from(
+) : AbstractLink() {
+
+    override val id: Space.Id by lazy { Space.Id(path) }
+
+    override fun navigate(workSpace: WorkSpace) = navigateOrCreate(workSpace) {
+        PdfSpace.from(
             path,
             workSpace = workSpace,
             currPage = page ?: 0
         )
-        workSpace.add(Tab(pdf))
     }
 }

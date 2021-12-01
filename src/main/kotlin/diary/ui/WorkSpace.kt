@@ -8,10 +8,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
+import diary.ui.spaces.Space
 import diary.utils.forEachIndexedCo
 import diary.utils.makeAlertDialog
 
-class Tab(private val space: UIComponent) : UIComponent by space
+class Tab(val space: Space) : UIComponent by space
 
 class WorkSpace(
     private val tabs: MutableList<Tab> = mutableStateListOf()
@@ -28,6 +29,9 @@ class WorkSpace(
             tooManyTabsDialog.value = true
         }
     }
+
+    operator fun get(id: Space.Id): Space? =
+        tabs.find { it.space.id == id }?.space
 
     @Composable
     override operator fun invoke() {
