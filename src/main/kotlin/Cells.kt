@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import java.nio.file.Path
+import kotlin.io.path.writeText
 
 interface Cell {
     fun save(path: Path)
@@ -38,9 +39,10 @@ abstract class AbstractCell : Cell {
     }
 }
 
-class TextCell : AbstractCell() {
+class TextCell(private var text: String = "") : AbstractCell() {
+
     override fun save(path: Path) {
-        TODO("Not yet implemented") // #7
+        path.writeText(text)
     }
 
     override fun load(path: Path): TextCell {
@@ -49,12 +51,16 @@ class TextCell : AbstractCell() {
 
     @Composable
     override operator fun invoke() = cell {
-        var text by remember { mutableStateOf("") }
+        var text by remember { mutableStateOf(this.text) }
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
             value = text,
             singleLine = false,
-            onValueChange = { text = it }
+            onValueChange = {
+                // TODO fix state management
+                text = it
+                this.text = it
+            }
         )
     }
 }

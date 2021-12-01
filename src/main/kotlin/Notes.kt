@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import java.awt.FileDialog
 import java.nio.file.Files.createDirectory
 import java.nio.file.Path
-import kotlin.io.path.deleteIfExists
+import kotlin.io.path.createFile
 
 class Notes(private val cells: SnapshotStateList<Cell>) {
 
@@ -112,24 +112,21 @@ class Notes(private val cells: SnapshotStateList<Cell>) {
     }
 
     fun save(path: Path) {
-        println("Save: $path")
-        path.removeAll { true }
-        path.deleteIfExists()
         val dir = createDirectory(path)
         cells.forEachIndexed { i, cell ->
-//            cell.save()
-
-//            val file = kotlin.io.path.createFile(dir, prefix = "$i-")
-//            file.writeLines(listOf("Hello", "world"))
-//            cell.save(i, dir)
+            val file = Path.of(dir.toString(), "$i.cell").createFile()
+            cell.save(file)
         }
-        // TODO
+        // TODO zip
     }
 
     companion object {
-        fun from(path: Path): Notes {
-            // TODO
-            return Notes()
-        }
+        @OptIn(ExperimentalStdlibApi::class)
+        fun from(path: Path) = Notes(buildList {
+            path.toFile().walk().filter { it.isFile }.sortedBy { it.name }.forEach { file ->
+                println("file = $file")
+                add(TextCell(file.readText()))
+            }
+        })
     }
 }

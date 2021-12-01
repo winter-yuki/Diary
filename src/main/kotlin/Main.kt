@@ -39,10 +39,12 @@ private fun Menu(tm: TabManager) {
         MenuButton("Open") {
             val path = callFileExplorer("Select File to Open") ?: return@MenuButton
             when (FileType.of(path)) {
-                FileType.Diary -> NotesTab(Notes.from(path))
-                else -> null.also {
-                    wrongFileTypeDialog = true
-                }
+                // TODO add check
+//                FileType.Diary -> NotesTab(Notes.from(path))
+//                else -> null.also {
+//                    wrongFileTypeDialog = true
+//                }
+                else -> NotesTab(Notes.from(path))
             }?.let { tab -> tm.add(tab) }
         }
     }
