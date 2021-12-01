@@ -156,7 +156,7 @@ class Notes(private val cells: SnapshotStateList<Cell>) : UIElem {
             // TODO make walk extension
             path.toFile().walk().filter { it.isFile }.sortedBy { it.name }.forEach { file ->
                 println("file = $file") // TODO
-                add(TextCell()) // TODO read text
+                add(TextCell(file.readText()))
             }
         })
     }

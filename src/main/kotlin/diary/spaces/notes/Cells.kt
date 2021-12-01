@@ -17,6 +17,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import diary.ui.UIElem
 import java.nio.file.Path
+import kotlin.io.path.writeText
 
 interface Cell : UIElem {
     fun save(path: Path)
@@ -37,16 +38,15 @@ abstract class AbstractCell : Cell {
     }
 }
 
-class TextCell : AbstractCell() {
+class TextCell(private var text: String = "") : AbstractCell() {
 
     override fun save(path: Path) {
-        // path.writeText(text)
-        println("Cell.save $path") // TODO
+        path.writeText(text)
     }
 
     @Composable
     override operator fun invoke() = cell {
-        var text by remember { mutableStateOf("") }
+        var text by remember { mutableStateOf(this.text) }
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
             value = text,
@@ -54,6 +54,7 @@ class TextCell : AbstractCell() {
             onValueChange = {
                 // TODO fix state management
                 text = it
+                this.text = it
             }
         )
     }
