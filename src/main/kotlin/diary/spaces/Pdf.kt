@@ -18,7 +18,8 @@ import java.nio.file.Path
 class Pdf(doc: PDDocument) : UIElem {
 
     private val renderer: PDFRenderer = PDFRenderer(doc)
-    private var currPage: Int = 0
+    private var _currPage: Int = 0
+    val currPage: Int get() = _currPage
     private val nPages: Int = doc.numberOfPages
 
     @Composable
@@ -37,22 +38,32 @@ class Pdf(doc: PDDocument) : UIElem {
                     TextButton(
                         onClick = {
                             if (currPage > 0) {
-                                currPage--
+                                _currPage--
                                 image = render()
                             }
                         },
-                        modifier = Modifier.wrapContentSize()
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .align(Alignment.CenterVertically)
                     ) {
                         Text("Prev")
                     }
+                    Text(
+                        "~ ${currPage + 1} ~",
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .align(Alignment.CenterVertically)
+                    )
                     TextButton(
                         onClick = {
                             if (currPage + 1 < nPages) {
-                                currPage++
+                                _currPage++
                                 image = render()
                             }
                         },
-                        modifier = Modifier.wrapContentSize()
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .align(Alignment.CenterVertically)
                     ) {
                         Text("Next")
                     }
