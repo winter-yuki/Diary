@@ -1,9 +1,16 @@
+package diary.spaces.notes
+
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -15,15 +22,12 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import diary.ui.UIElem
 import java.nio.file.Path
+import kotlin.io.path.writeText
 
-interface Cell {
+interface Cell : UIElem {
     fun save(path: Path)
-    fun load(path: Path): Cell
-
-    @Composable
-    operator fun invoke()
 
     companion object {
         fun of(path: Path): Cell {
@@ -47,45 +51,48 @@ abstract class AbstractCell : Cell {
     }
 }
 
-class TextCell(public var RawText: String = "") : AbstractCell() {
-    override fun save(path: Path) {
-        TODO("Not yet implemented") // #7
-    }
+class TextCell(private var _text: String = "") : AbstractCell() {
 
-    override fun load(path: Path): TextCell {
-        TODO("Not yet implemented") // #7
+    val text: String get() = _text
+
+    override fun save(path: Path) {
+        path.writeText(text)
     }
 
     @Composable
     override operator fun invoke() = cell {
-        var text by remember { mutableStateOf(RawText) }
+        var text by remember { mutableStateOf(this._text) }
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
             value = text,
             singleLine = false,
-            onValueChange = { text = it; RawText = it },
+            onValueChange = {
+                // TODO fix state management
+                text = it
+                _text = it
+            }
         )
     }
 }
 
-class RenderedTextCell(public val RawText: String = "") : AbstractCell() {
-    override fun save(path: Path) {
-        TODO("Not yet implemented") // #7
-    }
+class RenderedTextCell(val text: String = "") : AbstractCell() {
 
-    override fun load(path: Path): TextCell {
+    override fun save(path: Path) {
         TODO("Not yet implemented") // #7
     }
 
     @Composable
     override operator fun invoke() = cell {
-        var AnnostatedText = buildAnnotatedString {
+        val AnnostatedText = buildAnnotatedString {
             pushStringAnnotation(tag = "tag", annotation = "annotation")
-            withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)
-            ) { append("(empty link)") }
+            withStyle(
+                style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)
+            ) {
+                append("(empty link)")
+            }
         }
-        Column() {
-            Text(RawText)
+        Column {
+            Text(text)
             ClickableText(
                 text = AnnostatedText,
                 onClick = { println("Clicked") },
@@ -96,11 +103,7 @@ class RenderedTextCell(public val RawText: String = "") : AbstractCell() {
 
 class SketchCell : AbstractCell() {
     override fun save(path: Path) {
-        TODO("Not yet implemented") // #8
-    }
-
-    override fun load(path: Path): SketchCell {
-        TODO("Not yet implemented") // #8
+        println("Save sketch $path") // TODO
     }
 
     @Composable

@@ -1,10 +1,10 @@
+package diary
+
 import androidx.compose.desktop.DesktopMaterialTheme
 import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowSize
-import androidx.compose.ui.window.application
-import androidx.compose.ui.window.rememberWindowState
+import androidx.compose.ui.window.*
 import diary.ui.TabManager
 import diary.ui.TopMenu
 import diary.ui.WorkSpace
@@ -16,7 +16,8 @@ fun main() = application {
             size = WindowSize(
                 width = 1400.dp,
                 height = 900.dp,
-            )
+            ),
+            position = WindowPosition(Alignment.Center)
         ),
         onCloseRequest = ::exitApplication
     ) {
