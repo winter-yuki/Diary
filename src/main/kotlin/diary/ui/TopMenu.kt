@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import diary.ui.tabs.notes.NotesTab
 import diary.ui.tabs.pdf.PdfTab
@@ -48,6 +49,6 @@ private fun MenuButton(text: String, onClick: () -> Unit) {
         onClick = onClick,
         modifier = Modifier.wrapContentSize()
     ) {
-        Text(text, fontSize = 13.sp)
+        Text(text, fontSize = 13.sp, fontWeight = FontWeight.Medium)
     }
 }
