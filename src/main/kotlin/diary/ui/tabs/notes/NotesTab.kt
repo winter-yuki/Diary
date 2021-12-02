@@ -1,19 +1,18 @@
 package diary.ui.tabs.notes
 
-import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import diary.ui.Link
@@ -25,20 +24,24 @@ import diary.utils.removeIfExists
 import java.nio.file.Files.createDirectory
 import java.nio.file.Path
 import kotlin.io.path.createFile
+import kotlin.io.path.extension
 
 class NotesTab(
     private val cells: SnapshotStateList<Cell> = mutableStateListOf(),
     private val tabManager: TabManager,
     var path: Path = Path.of("")
 ) : Tab {
-
     // TODO change id to something better: new notes are the same
     override val id: Tab.Id get() = Tab.Id(path)
+    private val navigateDstName = mutableStateOf<Int?>(null)
 
     override fun navigate(link: Link) {
         require(link is NotesLink)
-        println("Notes navigate")
-        // TODO
+        val i = cells.indexOfFirst { it.name == link.cellName?.name }
+        println("i = $i") // TODO
+        if (i != -1) {
+            navigateDstName.value = i
+        }
     }
 
     @Composable
@@ -49,7 +52,7 @@ class NotesTab(
                 cells += TextCell()
             }
             Column {
-                Button(
+                TextButton(
                     onClick = {
                         val path = callJFileChooser(
                             title = "Select File Path",
@@ -68,9 +71,15 @@ class NotesTab(
                     state = state
                 ) {
                     itemsIndexed(cells) { i, cell ->
-                        CellBox(i, cell) { cell() }
+                        CellBox(i, cell, state) { cell() }
                     }
                 }
+//                runBlocking {
+//                    println("Run blocking") // TODO
+//                    navigateDstName.value?.let {
+//                        state.scrollToItem(it, 0)
+//                    }
+//                }
             }
             VerticalScrollbar(
                 modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
@@ -85,7 +94,7 @@ class NotesTab(
     }
 
     @Composable
-    private fun CellBox(iCell: Int, cell: Cell, block: @Composable () -> Unit) {
+    private fun CellBox(iCell: Int, cell: Cell, state: LazyListState, block: @Composable () -> Unit) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth().fillMaxHeight()
@@ -95,13 +104,43 @@ class NotesTab(
                     .padding(vertical = 4.dp)
                     .fillMaxWidth(0.75F)
             ) {
-                Button(
+                TextButton(
                     modifier = Modifier
                         .padding(5.dp)
-                        .size(width = 30.dp, height = 25.dp)
+                        .wrapContentSize()
+                        .border(
+                            BorderStroke(
+                                1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+                            )
+                        )
                         .align(Alignment.End),
                     onClick = { cells.removeAt(iCell) }
-                ) {}
+                ) {
+                    Text("X")
+                }
+
+                // TODO mb move to cell and make cell name immutable
+                var text by remember { mutableStateOf(cell.name) }
+                BasicTextField(
+                    modifier = Modifier
+//                        .fillMaxWidth(0.5f)
+//                        .fillMaxHeight(0.1f)
+                        .padding(2.dp)
+                        .border(
+                            BorderStroke(
+                                1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+                            )
+                        )
+                        .wrapContentSize(),
+//                        .background(color = Color.),
+                    value = text,
+                    textStyle = TextStyle(fontSize = 15.sp),
+                    singleLine = true,
+                    onValueChange = {
+                        text = it
+                        cell.name = it
+                    },
+                )
 
                 block()
 
@@ -116,11 +155,25 @@ class NotesTab(
                     when (cell) {
                         is TextCell -> CellButton("Render") {
                             cells.removeAt(iCell)
-                            cells.add(iCell, RenderedTextCell(cell.text))
+                            cells.add(
+                                iCell,
+                                RenderedTextCell(
+                                    text = cell.text,
+                                    name = cell.name,
+                                    scrollState = state,
+                                    cells = cells,
+                                    tabManager = tabManager
+                                )
+                            )
                         }
                         is RenderedTextCell -> CellButton("Edit") {
                             cells.removeAt(iCell)
-                            cells.add(iCell, TextCell(cell.text))
+                            cells.add(
+                                iCell,
+                                TextCell(_text = cell.text).apply {
+                                    name = cell.name
+                                }
+                            )
                         }
                     }
                 }
@@ -133,7 +186,12 @@ class NotesTab(
         Button(
             modifier = Modifier
                 .wrapContentSize()
-                .padding(10.dp),
+                .padding(7.dp)
+                .border(
+                    BorderStroke(
+                        1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+                    )
+                ),
             onClick = onClick,
         ) {
             Text(text, fontSize = 10.sp)
@@ -144,7 +202,7 @@ class NotesTab(
         path.removeIfExists()
         val diaryPath = Path.of(
             // TODO make Path extension
-            if (path.toFile().endsWith(".diary")) path.toString()
+            if (path.extension == "diary") path.toString()
             else "$path.diary"
         )
         val dir = createDirectory(diaryPath)

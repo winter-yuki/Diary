@@ -6,12 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -22,13 +23,16 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import diary.ui.TabManager
 import diary.ui.UIComponent
+import kotlinx.coroutines.runBlocking
 import java.nio.file.Path
 import kotlin.io.path.writeText
 
 class CellName(val name: String)
 
 interface Cell : UIComponent {
+    var name: String
     fun save(path: Path)
 
     companion object {
@@ -39,6 +43,7 @@ interface Cell : UIComponent {
 }
 
 abstract class AbstractCell : Cell {
+
     @Composable
     protected fun cell(block: @Composable () -> Unit) {
         Surface(shape = MaterialTheme.shapes.large, elevation = 2.dp) {
@@ -53,7 +58,10 @@ abstract class AbstractCell : Cell {
     }
 }
 
-class TextCell(private var _text: String = "") : AbstractCell() {
+class TextCell(
+    private var _text: String = "",
+    override var name: String = ""
+) : AbstractCell() {
 
     val text: String get() = _text
 
@@ -63,7 +71,7 @@ class TextCell(private var _text: String = "") : AbstractCell() {
 
     @Composable
     override operator fun invoke() = cell {
-        var text by remember { mutableStateOf(this._text) }
+        var text by remember { mutableStateOf(_text) }
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
             value = text,
@@ -77,36 +85,59 @@ class TextCell(private var _text: String = "") : AbstractCell() {
     }
 }
 
-class RenderedTextCell(val text: String = "") : AbstractCell() {
+class RenderedTextCell(
+    val text: String = "",
+    override var name: String = "",
+    val scrollState: LazyListState,
+    val cells: SnapshotStateList<Cell>,
+//    private val notesPath: Path,
+    private val tabManager: TabManager
+) : AbstractCell() {
 
     override fun save(path: Path) {
-        TODO("Not yet implemented") // #7
+        path.writeText(text)
     }
 
+    // TODO refactor
     @Composable
     override operator fun invoke() = cell {
-        val AnnostatedText = buildAnnotatedString {
-            pushStringAnnotation(tag = "tag", annotation = "annotation")
-            withStyle(
-                style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)
-            ) {
-                append("(empty link)")
+        val linkRegex = Regex("""#[a-zA-Z]+\S""")
+        val matches = linkRegex.findAll(text)
+
+        val linkedText = buildAnnotatedString {
+            var cursor = 0
+            for (match in matches) {
+                append(text.substring(cursor until match.range.first))
+
+                pushStringAnnotation(tag = match.value, annotation = match.value)
+                withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)) {
+                    append(match.value)
+                }
+                cursor = match.range.last + 1
             }
+            append(text.substring(cursor))
         }
+
         Column {
-            Text(text)
             ClickableText(
-                text = AnnostatedText,
-                onClick = { println("Clicked") },
-            )
+                modifier = Modifier.fillMaxWidth(),
+                text = linkedText
+            ) { offset ->
+                val linkAnnotation = linkedText
+                    .getStringAnnotations(start = offset, end = offset)
+                    .lastOrNull()?.item
+                val targetName = linkAnnotation?.substring(1)
+                runBlocking { scrollState.scrollToItem( cells.indexOfFirst { it.name == targetName } ) }
+            }
         }
     }
 }
 
-class SketchCell : AbstractCell() {
+class SketchCell(private val initName: String = "", override var name: String = "") : AbstractCell() {
     override fun save(path: Path) {
         println("Save sketch $path") // TODO
     }
+
 
     @Composable
     override operator fun invoke() = cell {
