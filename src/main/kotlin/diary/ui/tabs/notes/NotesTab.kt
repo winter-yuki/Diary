@@ -26,6 +26,10 @@ import androidx.compose.ui.unit.sp
 import diary.ui.Link
 import diary.ui.TabManager
 import diary.ui.tabs.Tab
+import diary.ui.tabs.notes.cells.Cell
+import diary.ui.tabs.notes.cells.CellName
+import diary.ui.tabs.notes.cells.SketchCell
+import diary.ui.tabs.notes.cells.TextCell
 import diary.utils.JFileChooserMode
 import diary.utils.callJFileChooser
 import diary.utils.removeIfExists
@@ -43,15 +47,8 @@ class NotesTab(
     // TODO change id to something better: new notes are the same
     override val id: Tab.Id get() = Tab.Id(path)
 
-//    private val navigateDstName = mutableStateOf<Int?>(null)
-
     override fun navigate(link: Link) {
         require(link is NotesLink)
-//        val i = cells.indexOfFirst { it.name == link.cellName?.name }
-//        println("i = $i") // TODO
-//        if (i != -1) {
-//            navigateDstName.value = i
-//        }
         // TODO
     }
 
@@ -137,13 +134,13 @@ class NotesTab(
             modifier = Modifier.padding(bottom = 5.dp).fillMaxWidth()
         ) {
             val text = remember { mutableStateOf(cell.name) }
-            CellNameField(cell, text)
+            CellNameField(text)
             CloseCellButton(iCell)
         }
     }
 
     @Composable
-    private fun RowScope.CellNameField(cell: Cell, text: MutableState<String>) {
+    private fun RowScope.CellNameField(name: MutableState<CellName>) {
         BasicTextField(
             modifier = Modifier
                 .padding(top = 5.dp)
@@ -154,12 +151,11 @@ class NotesTab(
                     )
                 )
                 .wrapContentSize(),
-            value = text.value,
+            value = name.value.name,
             textStyle = TextStyle(fontSize = 15.sp),
             singleLine = true,
             onValueChange = {
-                text.value = it
-                cell.name = it
+                name.value = CellName(it)
             }
         )
     }
@@ -185,30 +181,30 @@ class NotesTab(
             cells.add(iCell + 1, SketchCell())
         }
         // TODO refactor
-        when (cell) {
-            is TextCell -> CellButton("Render") {
-                cells.removeAt(iCell)
-                cells.add(
-                    iCell,
-                    RenderedTextCell(
-                        text = cell.text,
-                        name = cell.name,
-                        scrollState = state,
-                        cells = cells,
-                        tabManager = tabManager
-                    )
-                )
-            }
-            is RenderedTextCell -> CellButton("Edit") {
-                cells.removeAt(iCell)
-                cells.add(
-                    iCell,
-                    TextCell(_text = cell.text).apply {
-                        name = cell.name
-                    }
-                )
-            }
-        }
+//        when (cell) {
+//            is TextCell -> CellButton("Render") {
+//                cells.removeAt(iCell)
+//                cells.add(
+//                    iCell,
+//                    RenderedTextCell(
+//                        text = cell.text,
+//                        name = cell.name,
+//                        scrollState = state,
+//                        cells = cells,
+//                        tabManager = tabManager
+//                    )
+//                )
+//            }
+//            is RenderedTextCell -> CellButton("Edit") {
+//                cells.removeAt(iCell)
+//                cells.add(
+//                    iCell,
+//                    TextCell(_text = cell.text).apply {
+//                        name = cell.name
+//                    }
+//                )
+//            }
+//        }
     }
 
     @Composable
@@ -246,7 +242,7 @@ class NotesTab(
             buildList {
                 path.toFile().walk().filter { it.isFile }.sortedBy { it.name }.forEach { file ->
                     // TODO determine cell type
-                    add(TextCell(file.readText()))
+                    add(TextCell(text = mutableStateOf(file.readText())))
                 }
             }.toMutableStateList(),
             tabManager = tabManager
