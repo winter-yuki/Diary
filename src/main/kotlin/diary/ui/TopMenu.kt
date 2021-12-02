@@ -21,10 +21,11 @@ fun TopMenu(tabManager: TabManager) {
         title = "Wrong file type",
         text = "Only PDF and Diary files are supported"
     )
+    var tooManyTabs by TooManytabsAlert(tabManager)
     Row {
         MenuButton("New") {
             val notes = NotesTab(tabManager = tabManager)
-            tabManager.add(notes)
+            tabManager.add(notes) { tooManyTabs = true }
         }
         MenuButton("Open") {
             val path = callJFileChooser("Select File to Open") ?: return@MenuButton
@@ -36,7 +37,7 @@ fun TopMenu(tabManager: TabManager) {
                     return@MenuButton
                 }
             }
-            tabManager.add(space)
+            tabManager.add(space) { tooManyTabs = true }
         }
     }
 }
