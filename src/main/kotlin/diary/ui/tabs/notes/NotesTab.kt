@@ -56,56 +56,59 @@ class NotesTab(
     }
 
     @Composable
-    override operator fun invoke() {
-        Box(modifier = Modifier.fillMaxSize()) {
-            val state = rememberLazyListState()
-            if (cells.isEmpty()) {
-                cells += TextCell()
-            }
-            Column {
-                TextButton(
-                    onClick = {
-                        val path = callJFileChooser(
-                            title = "Select File Path",
-                            mode = JFileChooserMode.Save
-                        )?.let { path ->
-                            save(path)
-                            this@NotesTab.path = path
-                        }
-                    },
-                    modifier = Modifier.align(Alignment.End).wrapContentSize()
-                ) {
-                    Text("Save", fontSize = 10.sp)
-                }
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize().padding(end = 12.dp),
-                    state = state
-                ) {
-                    itemsIndexed(cells, key = { i, _ -> i }) { i, cell ->
-                        CellBox(i, cell, state) { cell() }
-                    }
-                }
-//                runBlocking {
-//                    println("Run blocking") // TODO
-//                    navigateDstName.value?.let {
-//                        state.scrollToItem(it, 0)
-//                    }
-//                }
-            }
-            VerticalScrollbar(
-                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-                adapter = rememberScrollbarAdapter(
-                    scrollState = state
-                )
-            )
+    override operator fun invoke() = Box(modifier = Modifier.fillMaxSize()) {
+        val state = rememberLazyListState()
+        if (cells.isEmpty()) {
+            cells += TextCell()
         }
-
-        // TODO move cell up/down buttons #3
-        // TODO show buttons only on focus #4
+        Column {
+            SaveButton()
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().padding(end = 12.dp),
+                state = state
+            ) {
+                itemsIndexed(cells) { i, cell ->
+                    CellBox(i, cell, state)
+                }
+            }
+        }
+        VerticalScrollbar(
+            modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+            adapter = rememberScrollbarAdapter(
+                scrollState = state
+            )
+        )
     }
 
     @Composable
-    private fun CellBox(iCell: Int, cell: Cell, state: LazyListState, block: @Composable () -> Unit) {
+    private fun ColumnScope.SaveButton() {
+        TextButton(
+            onClick = {
+                val path = callJFileChooser(
+                    title = "Select File Path",
+                    mode = JFileChooserMode.Save
+                )?.let { path ->
+                    save(path)
+                    this@NotesTab.path = path
+                }
+            },
+            modifier = Modifier.align(Alignment.End).wrapContentSize()
+        ) {
+            Text("Save", fontSize = 10.sp)
+        }
+    }
+
+    @Composable
+    private fun CellBox(iCell: Int, cell: Cell, state: LazyListState) {
+        CellContentAlignment {
+            CellAboveButtons(iCell, cell)
+            cell()
+            CellBelowButtons(iCell, cell, state)
+        }
+    }
+
+    @Composable
+    private fun CellContentAlignment(block: @Composable () -> Unit) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth().fillMaxHeight()
@@ -115,78 +118,88 @@ class NotesTab(
                     .padding(vertical = 4.dp)
                     .fillMaxWidth(0.75F)
             ) {
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-//                    horizontalArrangement = Arrangement.spacedBy(100.dp),
-                    modifier = Modifier.padding(bottom = 5.dp).fillMaxWidth()
-                )
-                {
-                    // TODO mb move to cell and make cell name immutable
-                    var text by remember { mutableStateOf(cell.name) }
-                    BasicTextField(
-                        modifier = Modifier
-                            .padding(top = 5.dp)
-                            .align(Alignment.Bottom)
-                            .border(
-                                BorderStroke(
-                                    1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
-                                )
-                            )
-                            .wrapContentSize(),
-                        value = text,
-                        textStyle = TextStyle(fontSize = 15.sp),
-                        singleLine = true,
-                        onValueChange = {
-                            text = it
-                            cell.name = it
-                        },
-                    )
-                    Button(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .height(25.dp),
-                        onClick = { cells.removeAt(iCell) }
-                    ) {
-                        Text("x", fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                    }
-                }
-
                 block()
+            }
+        }
+    }
 
-                Row {
-                    CellButton("Add text") {
-                        cells.add(iCell + 1, TextCell())
+    @Composable
+    private fun CellAboveButtons(iCell: Int, cell: Cell) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.padding(bottom = 5.dp).fillMaxWidth()
+        ) {
+            val text = remember { mutableStateOf(cell.name) }
+            CellNameField(cell, text)
+            CloseCellButton(iCell)
+        }
+    }
+
+    @Composable
+    private fun RowScope.CellNameField(cell: Cell, text: MutableState<String>) {
+        BasicTextField(
+            modifier = Modifier
+                .padding(top = 5.dp)
+                .align(Alignment.Bottom)
+                .border(
+                    BorderStroke(
+                        1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+                    )
+                )
+                .wrapContentSize(),
+            value = text.value,
+            textStyle = TextStyle(fontSize = 15.sp),
+            singleLine = true,
+            onValueChange = {
+                text.value = it
+                cell.name = it
+            }
+        )
+    }
+
+    @Composable
+    private fun CloseCellButton(iCell: Int) {
+        Button(
+            modifier = Modifier
+                .wrapContentSize()
+                .height(25.dp),
+            onClick = { cells.removeAt(iCell) }
+        ) {
+            Text("x", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+        }
+    }
+
+    @Composable
+    private fun CellBelowButtons(iCell: Int, cell: Cell, state: LazyListState) = Row {
+        CellButton("Add text") {
+            cells.add(iCell + 1, TextCell())
+        }
+        CellButton("Add sketch") {
+            cells.add(iCell + 1, SketchCell())
+        }
+        // TODO refactor
+        when (cell) {
+            is TextCell -> CellButton("Render") {
+                cells.removeAt(iCell)
+                cells.add(
+                    iCell,
+                    RenderedTextCell(
+                        text = cell.text,
+                        name = cell.name,
+                        scrollState = state,
+                        cells = cells,
+                        tabManager = tabManager
+                    )
+                )
+            }
+            is RenderedTextCell -> CellButton("Edit") {
+                cells.removeAt(iCell)
+                cells.add(
+                    iCell,
+                    TextCell(_text = cell.text).apply {
+                        name = cell.name
                     }
-                    CellButton("Add sketch") {
-                        cells.add(iCell + 1, SketchCell())
-                    }
-                    // TODO refactor
-                    when (cell) {
-                        is TextCell -> CellButton("Render") {
-                            cells.removeAt(iCell)
-                            cells.add(
-                                iCell,
-                                RenderedTextCell(
-                                    text = cell.text,
-                                    name = cell.name,
-                                    scrollState = state,
-                                    cells = cells,
-                                    tabManager = tabManager
-                                )
-                            )
-                        }
-                        is RenderedTextCell -> CellButton("Edit") {
-                            cells.removeAt(iCell)
-                            cells.add(
-                                iCell,
-                                TextCell(_text = cell.text).apply {
-                                    name = cell.name
-                                }
-                            )
-                        }
-                    }
-                }
+                )
             }
         }
     }
@@ -200,8 +213,6 @@ class NotesTab(
                 .height(25.dp),
             onClick = onClick,
             shape = MaterialTheme.shapes.small,
-//            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.8f)),
-//            border = ()
         ) {
             Text(text, fontSize = 8.sp, color = Color.White)
         }
