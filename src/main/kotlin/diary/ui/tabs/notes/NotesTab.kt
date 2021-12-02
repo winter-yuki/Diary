@@ -106,7 +106,7 @@ class NotesTab(
             ) {
                 TextButton(
                     modifier = Modifier
-                        .padding(5.dp)
+//                        .padding(5.dp)
                         .wrapContentSize()
                         .border(
                             BorderStroke(
@@ -116,7 +116,7 @@ class NotesTab(
                         .align(Alignment.End),
                     onClick = { cells.removeAt(iCell) }
                 ) {
-                    Text("X")
+                    Text("XO")
                 }
 
                 // TODO mb move to cell and make cell name immutable
@@ -186,15 +186,17 @@ class NotesTab(
         Button(
             modifier = Modifier
                 .wrapContentSize()
-                .padding(7.dp)
-                .border(
-                    BorderStroke(
-                        1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
-                    )
-                ),
+                .padding(5.dp)
+                .height(26.dp),
+//                .border(
+//                    BorderStroke(
+//                        1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+//                    )
+//                ),
             onClick = onClick,
+            shape = MaterialTheme.shapes.small
         ) {
-            Text(text, fontSize = 10.sp)
+            Text(text, fontSize = 8.sp)
         }
     }
 

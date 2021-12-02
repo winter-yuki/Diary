@@ -4,19 +4,19 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import diary.ui.tabs.Tab
 import diary.utils.forEachIndexedCo
 import diary.utils.makeAlertDialog
+import diary.ui.Theme
 
 class TabManager(
     private val tabs: MutableList<Tab> = mutableStateListOf()
@@ -48,7 +48,7 @@ class TabManager(
             EmptyTab()
             return
         }
-        Row {
+        Row(modifier = Modifier.padding(start = 5.dp, end = 5.dp, bottom = 5.dp)) {
             tabs.forEachIndexedCo { i, tab ->
                 val fraction = 1F / (tabs.size - i)
                 Column(
@@ -57,30 +57,30 @@ class TabManager(
                         .fillMaxHeight()
                         .padding(5.dp)
                 ) {
-                    TextButton(
+                    Button(
                         onClick = { tabs.remove(tab) },
                         modifier = Modifier
                             .align(Alignment.End)
-                            .padding(bottom = 5.dp)
-                            .border(
-                                BorderStroke(
-                                    1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
-                                )
-                            )
+                            .padding(bottom = 2.dp)
+                            .wrapContentSize()
+                            .height(25.dp),
+//                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Yellow)
                     ) {
-                        Text("X")
+                        Text("Close tab", fontSize = 8.sp)
                     }
-                    Box(
-                        modifier = Modifier
-                            .border(
-                                border = BorderStroke(
-                                    1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
-                                ),
-                                shape = RoundedCornerShape(1)
-                            )
-                            .padding(5.dp)
-                    ) {
-                        tab()
+                    Surface(shape = MaterialTheme.shapes.large, elevation = 12.dp) {
+                        Box(
+                            modifier = Modifier
+                                .border(
+                                    border = BorderStroke(
+                                        1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+                                    ),
+//                                    shape = RoundedCornerShape(1)
+                                )
+                                .padding(8.dp)
+                        ) {
+                            tab()
+                        }
                     }
                 }
             }

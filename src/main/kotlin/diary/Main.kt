@@ -1,11 +1,11 @@
 package diary
 
-import androidx.compose.desktop.DesktopMaterialTheme
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import diary.ui.MyTheme
+import diary.ui.Theme
 import diary.ui.TabManager
 import diary.ui.TopMenu
 
@@ -17,12 +17,13 @@ fun main() = application {
                 width = 1400.dp,
                 height = 900.dp,
             ),
-            position = WindowPosition(Alignment.Center)
+            position = WindowPosition(Alignment.Center),
         ),
-        onCloseRequest = ::exitApplication
+        onCloseRequest = ::exitApplication,
     ) {
         val tabManager = TabManager()
-        MyTheme {
+        Theme {
+//        MaterialTheme {
             Column {
                 TopMenu(tabManager)
                 tabManager()

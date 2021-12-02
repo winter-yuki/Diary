@@ -28,6 +28,7 @@ import diary.ui.UIComponent
 import kotlinx.coroutines.runBlocking
 import java.nio.file.Path
 import kotlin.io.path.writeText
+import diary.ui.Theme
 
 class CellName(val name: String)
 
@@ -46,7 +47,7 @@ abstract class AbstractCell : Cell {
 
     @Composable
     protected fun cell(block: @Composable () -> Unit) {
-        Surface(shape = MaterialTheme.shapes.large, elevation = 2.dp) {
+        Surface(shape = MaterialTheme.shapes.medium, elevation = 2.dp) {
             block()
         }
     }

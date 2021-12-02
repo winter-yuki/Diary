@@ -1,20 +1,21 @@
 package diary.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
+import androidx.compose.material.Shapes
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.awt.Font
 
 
-// In Colors.kt
 
 val Navy500 = Color(0xFF64869B)
 val Navy700 = Color(0xFF37596D)
@@ -23,7 +24,7 @@ val Green300 = Color(0xFF3DDC84)
 val Green900 = Color(0xFF00A956)
 
 val LightColors = lightColors(
-    primary = Color.Red,
+    primary = Navy700,
     primaryVariant = Navy900,
     secondary = Green300,
     secondaryVariant = Green900
@@ -38,7 +39,6 @@ val DarkColors = darkColors(
 )
 
 
-// In Type.kt
 
 val H6 = TextStyle(
     fontWeight = FontWeight.Medium,
@@ -65,9 +65,20 @@ val Typography = Typography(
 )
 
 
+val Shapes = Shapes(
+    small = RoundedCornerShape(percent = 20),
+    medium = RoundedCornerShape(20),
+    large = CutCornerShape(
+        topStart = 16.dp,
+        topEnd = 0.dp,
+        bottomStart = 0.dp,
+        bottomEnd = 0.dp
+    )
+)
+
 
 @Composable
-fun MyTheme(
+fun Theme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
@@ -80,7 +91,7 @@ fun MyTheme(
     MaterialTheme(
         colors = colors,
         typography = Typography,
-//        shapes = Shapes,
+        shapes = Shapes,
         content = content
     )
 }
