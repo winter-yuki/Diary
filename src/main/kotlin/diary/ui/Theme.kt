@@ -18,8 +18,13 @@ import androidx.compose.ui.unit.sp
 
 
 val Navy500 = Color(0xFF64869B)
-val Navy700 = Color(0xFF37596D)
-val Navy900 = Color(0xFF073042)
+
+//val Navy700 = Color(0xFF37596D)
+val Navy700 = Color(0xffd11aff)
+
+//val Navy900 = Color(0xFF073042)
+val Navy900 = Color(0xfff0b3ff)
+
 val Green300 = Color(0xFF3DDC84)
 val Green900 = Color(0xFF00A956)
 
@@ -28,14 +33,12 @@ val LightColors = lightColors(
     primaryVariant = Navy900,
     secondary = Green300,
     secondaryVariant = Green900
-    // Using default values for onPrimary, surface, error, etc.
 )
 
 val DarkColors = darkColors(
     primary = Navy500,
     primaryVariant = Navy900,
     secondary = Green300
-    // secondaryVariant == secondary in dark theme
 )
 
 

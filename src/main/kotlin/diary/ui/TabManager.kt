@@ -64,7 +64,7 @@ class TabManager(
                             .padding(bottom = 2.dp)
                             .wrapContentSize()
                             .height(25.dp),
-//                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Yellow)
+
                     ) {
                         Text("Close tab", fontSize = 8.sp)
                     }
