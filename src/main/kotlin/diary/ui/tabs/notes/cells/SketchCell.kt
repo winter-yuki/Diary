@@ -59,7 +59,7 @@ class SketchCell(
         }
     }
 
-    fun DrawScope.drawPath() {
+    private fun DrawScope.drawPath() {
         drawPath(
             path = path,
             color = Color(0xFF37596D),
