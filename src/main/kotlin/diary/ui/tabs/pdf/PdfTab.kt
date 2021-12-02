@@ -18,6 +18,8 @@ import diary.ui.tabs.Tab
 import diary.utils.makeAlertDialog
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.rendering.PDFRenderer
+import org.jetbrains.skija.Bitmap
+import org.jetbrains.skiko.toBitmap
 import java.nio.file.Path
 
 class PdfTab(
@@ -103,6 +105,9 @@ class PdfTab(
     // TODO remove extra padding
     private fun render(): ImageBitmap =
         renderer.renderImage(currPage).toComposeBitmap()
+
+    private fun renderBasicBitmap(): Bitmap =
+        renderer.renderImage(currPage).toBitmap()
 
     companion object {
         fun from(path: Path, tabManager: TabManager, currPage: Int = 0) =

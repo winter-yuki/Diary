@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clipToBounds
@@ -153,7 +154,8 @@ class RenderedTextCell(
 class SketchCell(
     private val initName: String = "",
     override var name: String = "",
-    val backgroundImage: String?
+    val backgroundImagePath: String //,
+//    val size: Size
 ) : AbstractCell() {
     override fun save(path: Path) {
         println("Save sketch $path") // TODO
@@ -166,18 +168,12 @@ class SketchCell(
         var action by remember { mutableStateOf<Offset?>(null) }
         val path = androidx.compose.ui.graphics.Path()
 
-//        if (backgroundImage != File("null")) { }
-//            var imageBitmap = remember {
-//                org.jetbrains.skija.Image.makeFromEncoded(backgroundImage.readBytes()).asImageBitmap()
-//            }
-//            Image(imageBitmap, "background")
-//        } else println("No image")
-
         Canvas(
             modifier = Modifier
                 .clipToBounds()
                 .height(250.dp)
                 .fillMaxWidth()
+//                .size(width = size.width.dp, height = size.height.dp)
                 .pointerInput(Unit) {
                     detectDragGestures(
                         onDragStart = {
@@ -193,15 +189,12 @@ class SketchCell(
                     }
                 }
         ) {
-            if (backgroundImage != "null") {
-                drawImage(org.jetbrains.skija.Image.makeFromEncoded(File(backgroundImage.toString()).readBytes()).asImageBitmap())
+            if (backgroundImagePath != "null") {
+                drawImage(
+                    org.jetbrains.skija.Image.makeFromEncoded(File(backgroundImagePath).readBytes())
+                        .asImageBitmap()
+                )
             }
-
-//            drawRect(
-//                color=Color.Red,
-//                topLeft = Offset(0f,0f),
-//                size = Size(width=100f, height = 100f)
-//            )
 
             action?.let {
                 drawPath(
@@ -212,11 +205,6 @@ class SketchCell(
                 )
             }
         }
-
-//        mainCanvas
-
-//        if (backgroundImage != File("null")) {
-//        }
 
         // TODO resize cell bar appearing on focus #9
         // TODO clickable link: click -> jump #11

@@ -12,8 +12,11 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -128,8 +131,6 @@ class NotesTab(
                 var text by remember { mutableStateOf(cell.name) }
                 BasicTextField(
                     modifier = Modifier
-//                        .fillMaxWidth(0.5f)
-//                        .fillMaxHeight(0.1f)
                         .padding(2.dp)
                         .border(
                             BorderStroke(
@@ -137,17 +138,17 @@ class NotesTab(
                             )
                         )
                         .wrapContentSize(),
-//                        .background(color = Color.),
                     value = text,
                     textStyle = TextStyle(fontSize = 15.sp),
                     singleLine = true,
                     onValueChange = {
                         text = it
                         cell.name = it
+                        cell.name = it
                     },
                 )
 
-                Box ( contentAlignment = Alignment.Center ) {
+                Box(contentAlignment = Alignment.Center) {
                     block()
                 }
 
@@ -157,9 +158,23 @@ class NotesTab(
                     }
 
                     CellButton("Add sketch") {
-
-                        var backgroundImage = File(callJImageChooser("Choose background image").toString()).toString()
-                        cells.add(iCell + 1, SketchCell(backgroundImage = backgroundImage))
+                        var backgroundImagePath = callJImageChooser("Choose background image").toString()
+//                        var backgroundImageBitmap = ImageBitmap(width = 200, height = 100)
+//                        if (backgroundImagePath != "null") {
+//                            backgroundImageBitmap =
+//                                org.jetbrains.skija.Image.makeFromEncoded(File(backgroundImagePath).readBytes())
+//                                    .asImageBitmap()
+//                        }
+                        cells.add(
+                            iCell + 1,
+                            SketchCell(
+                                backgroundImagePath = backgroundImagePath,
+//                                size = Size(
+//                                    width = backgroundImageBitmap.width.toFloat(),
+//                                    height = backgroundImageBitmap.height.toFloat()
+//                                )
+                            )
+                        )
                     }
 
                     // TODO refactor
