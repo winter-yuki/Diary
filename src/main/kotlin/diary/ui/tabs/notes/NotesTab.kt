@@ -57,27 +57,14 @@ class NotesTab(
 
     @Composable
     override operator fun invoke() = Box(modifier = Modifier.fillMaxSize()) {
-        val state = rememberLazyListState()
         if (cells.isEmpty()) {
             cells += TextCell()
         }
         Column {
             SaveButton()
-            LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(end = 12.dp),
-                state = state
-            ) {
-                itemsIndexed(cells) { i, cell ->
-                    CellBox(i, cell, state)
-                }
-            }
+            val state = rememberLazyListState()
+            CellList(cells, state)
         }
-        VerticalScrollbar(
-            modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-            adapter = rememberScrollbarAdapter(
-                scrollState = state
-            )
-        )
     }
 
     @Composable
@@ -95,6 +82,26 @@ class NotesTab(
             modifier = Modifier.align(Alignment.End).wrapContentSize()
         ) {
             Text("Save", fontSize = 10.sp)
+        }
+    }
+
+    @Composable
+    private fun CellList(cells: List<Cell>, state: LazyListState) {
+        Box {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().padding(end = 12.dp),
+                state = state
+            ) {
+                itemsIndexed(cells) { i, cell ->
+                    CellBox(i, cell, state)
+                }
+            }
+            VerticalScrollbar(
+                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                adapter = rememberScrollbarAdapter(
+                    scrollState = state
+                )
+            )
         }
     }
 
