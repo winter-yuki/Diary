@@ -3,6 +3,7 @@ package diary.ui.tabs.notes
 import diary.ui.AbstractLink
 import diary.ui.TabManager
 import diary.ui.tabs.Tab
+import diary.ui.tabs.notes.cells.CellName
 import java.nio.file.Path
 
 data class NotesLink(

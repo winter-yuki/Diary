@@ -1,6 +1,6 @@
 package diary.ui.tabs.pdf
 
-import androidx.compose.foundation.ExperimentalDesktopApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.mouseClickable
@@ -10,15 +10,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.toComposeBitmap
+import androidx.compose.ui.graphics.toComposeImageBitmap
+import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.unit.dp
 import diary.ui.Link
 import diary.ui.TabManager
 import diary.ui.tabs.Tab
-import diary.utils.makeAlertDialog
+import diary.utils.makeAlertDialogStateful
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.rendering.PDFRenderer
-import org.jetbrains.skija.Bitmap
+import org.jetbrains.skia.Bitmap
 import org.jetbrains.skiko.toBitmap
 import java.nio.file.Path
 
@@ -40,11 +41,11 @@ class PdfTab(
         _currPage.value = link.page ?: 0
     }
 
-    @OptIn(ExperimentalDesktopApi::class)
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun invoke() {
         Box(modifier = Modifier.fillMaxSize().padding(10.dp)) {
-            var linkCreatedDialog by makeAlertDialog(
+            var linkCreatedDialog by makeAlertDialogStateful(
                 title = "Link created!",
                 text = "Link created and now you can add it to your notes"
             )
@@ -104,7 +105,7 @@ class PdfTab(
 
     // TODO remove extra padding
     private fun render(): ImageBitmap =
-        renderer.renderImage(currPage).toComposeBitmap()
+        renderer.renderImage(currPage).toComposeImageBitmap()
 
     private fun renderBasicBitmap(): Bitmap =
         renderer.renderImage(currPage).toBitmap()

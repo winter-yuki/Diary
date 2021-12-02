@@ -38,33 +38,45 @@ fun <T> forEachCo(vararg ts: T, block: @Composable (T) -> Unit) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun makeAlertDialog(
+fun AlertDialog(
     title: String, text: String,
-    state: MutableState<Boolean>? = null
+    open: MutableState<Boolean>
+) {
+    var isOpen by open
+    if (!isOpen) return
+    AlertDialog(
+        onDismissRequest = { isOpen = false },
+        title = {
+            Text(text = title, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+        },
+        text = {
+            Text(text, fontSize = 13.sp)
+        },
+        buttons = {
+            CancelButton { isOpen = false }
+        },
+        modifier = Modifier.width(350.dp).wrapContentHeight()
+    )
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun makeAlertDialogStateful(
+    title: String, text: String
 ): MutableState<Boolean> {
-    val delegate = remember { state ?: mutableStateOf(false) }
-    var open by delegate
-    if (open) {
-        AlertDialog(
-            onDismissRequest = { open = false },
-            title = {
-                Text(text = title, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            },
-            text = {
-                Text(text, fontSize = 13.sp)
-            },
-            buttons = {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    TextButton(
-                        onClick = { open = false },
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    ) {
-                        Text("Cancel")
-                    }
-                }
-            },
-            modifier = Modifier.width(350.dp).wrapContentHeight()
-        )
+    val open = remember { mutableStateOf(false) }
+    AlertDialog(title = title, text = text, open = open)
+    return open
+}
+
+@Composable
+fun CancelButton(onCancel: () -> Unit) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        TextButton(
+            onClick = onCancel,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            Text("Cancel")
+        }
     }
-    return delegate
 }
