@@ -1,8 +1,5 @@
 package diary.ui.tabs.notes
-
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -11,13 +8,11 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Button
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -28,7 +23,6 @@ import diary.ui.tabs.Tab
 import diary.utils.JFileChooserMode
 import diary.utils.callJFileChooser
 import diary.utils.removeIfExists
-import kotlinx.coroutines.runBlocking
 import java.nio.file.Files.createDirectory
 import java.nio.file.Path
 import kotlin.io.path.createFile
@@ -136,6 +130,26 @@ class NotesTab(
                         }
                     )
                 }
+                BasicTextField(
+                    modifier = Modifier
+//                        .fillMaxWidth(0.5f)
+//                        .fillMaxHeight(0.1f)
+                        .padding(2.dp)
+                        .border(
+                            BorderStroke(
+                                1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+                            )
+                        )
+                        .wrapContentSize(),
+//                        .background(color = Color.),
+                    value = text,
+                    textStyle = TextStyle(fontSize = 15.sp),
+                    singleLine = true,
+                    onValueChange = {
+                        text = it
+                        cell.name = it
+                    },
+                )
 
                 block()
 
