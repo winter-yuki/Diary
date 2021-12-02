@@ -53,14 +53,7 @@ fun AlertDialog(
             Text(text, fontSize = 13.sp)
         },
         buttons = {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                TextButton(
-                    onClick = { isOpen = false },
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                ) {
-                    Text("Cancel")
-                }
-            }
+            CancelButton { isOpen = false }
         },
         modifier = Modifier.width(350.dp).wrapContentHeight()
     )
@@ -74,4 +67,16 @@ fun makeAlertDialogStateful(
     val open = remember { mutableStateOf(false) }
     AlertDialog(title = title, text = text, open = open)
     return open
+}
+
+@Composable
+fun CancelButton(onCancel: () -> Unit) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        TextButton(
+            onClick = onCancel,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            Text("Cancel")
+        }
+    }
 }
