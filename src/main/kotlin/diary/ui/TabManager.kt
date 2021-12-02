@@ -24,7 +24,7 @@ class TabManager(
 
     val linkBuffer = LinkBuffer()
     private var tooManyTabsDialog = mutableStateOf(false)
-    private val maxNTabs = 4
+    private val maxNTabs = 3
 
     fun add(tab: Tab) {
         if (tabs.size < maxNTabs) {
