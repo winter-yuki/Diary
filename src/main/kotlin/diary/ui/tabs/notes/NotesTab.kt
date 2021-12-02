@@ -1,11 +1,15 @@
 package diary.ui.tabs.notes
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -13,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,7 +37,6 @@ class NotesTab(
     private val tabManager: TabManager,
     var path: Path = Path.of("")
 ) : Tab {
-
     // TODO change id to something better: new notes are the same
     override val id: Tab.Id get() = Tab.Id(path)
     private val navigateDstName = mutableStateOf<Int?>(null)
@@ -73,15 +77,15 @@ class NotesTab(
                     state = state
                 ) {
                     itemsIndexed(cells) { i, cell ->
-                        CellBox(i, cell) { cell() }
+                        CellBox(i, cell, state) { cell() }
                     }
                 }
-                runBlocking {
-                    println("Run blocking") // TODO
-                    navigateDstName.value?.let {
-                        state.scrollToItem(it, 0)
-                    }
-                }
+//                runBlocking {
+//                    println("Run blocking") // TODO
+//                    navigateDstName.value?.let {
+//                        state.scrollToItem(it, 0)
+//                    }
+//                }
             }
             VerticalScrollbar(
                 modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
@@ -96,7 +100,7 @@ class NotesTab(
     }
 
     @Composable
-    private fun CellBox(iCell: Int, cell: Cell, label: String = "", block: @Composable () -> Unit) {
+    private fun CellBox(iCell: Int, cell: Cell, state: LazyListState, block: @Composable () -> Unit) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth().fillMaxHeight()
@@ -115,9 +119,12 @@ class NotesTab(
                 ) {}
 
                 // TODO mb move to cell and make cell name immutable
-                var text by remember { mutableStateOf(label) }
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(0.5f).fillMaxHeight(0.1f),
+                var text by remember { mutableStateOf(cell.name) }
+                BasicTextField(
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                        .fillMaxHeight(0.1f)
+                        .background(color = Color.Gray),
                     value = text,
                     textStyle = TextStyle(fontSize = 10.sp),
                     singleLine = true,
@@ -142,9 +149,7 @@ class NotesTab(
                             cells.removeAt(iCell)
                             cells.add(
                                 iCell,
-                                RenderedTextCell(text = cell.text, notesPath = path, tabManager = tabManager).apply {
-                                    name = cell.name
-                                }
+                                RenderedTextCell(text = cell.text, name = cell.name, scrollState = state, cells = cells)
                             )
                         }
                         is RenderedTextCell -> CellButton("Edit") {

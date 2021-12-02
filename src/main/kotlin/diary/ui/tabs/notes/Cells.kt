@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -23,6 +25,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import diary.ui.TabManager
 import diary.ui.UIComponent
+import kotlinx.coroutines.runBlocking
 import java.nio.file.Path
 import kotlin.io.path.writeText
 
@@ -85,8 +88,10 @@ class TextCell(
 class RenderedTextCell(
     val text: String = "",
     override var name: String = "",
-    private val notesPath: Path, // TODO
-    private val tabManager: TabManager
+    val scrollState: LazyListState,
+    val cells: SnapshotStateList<Cell>
+//    private val notesPath: Path, // TODO
+//    private val tabManager: TabManager
 ) : AbstractCell() {
 
     override fun save(path: Path) {
@@ -120,11 +125,14 @@ class RenderedTextCell(
             ) { offset ->
                 val linkAnnotation = linkedText
                     .getStringAnnotations(start = offset, end = offset)
-                    .lastOrNull()?.item ?: return@ClickableText
-                println("Clicked $linkAnnotation") // TODO
+                    .lastOrNull()?.item //?: return@ClickableText
 //                runNavigate = CellName(linkAnnotation.substring(1))
-                val name = linkAnnotation.substring(1)
-                NotesLink(path = notesPath, cellName = CellName(name)).navigate(tabManager)
+                val targetName = linkAnnotation?.substring(1)
+                println("Clicked $targetName")
+                runBlocking { scrollState.scrollToItem( cells.indexOfFirst { it.name == targetName } ) }
+
+//                runBlocking { scrollState.scrollToItem(0) }
+//                NotesLink(path = notesPath, cellName = CellName(name)).navigate(tabManager)
             }
         }
     }
