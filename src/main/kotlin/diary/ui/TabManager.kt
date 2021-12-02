@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -50,16 +51,27 @@ class TabManager(
         Row {
             tabs.forEachIndexedCo { i, tab ->
                 val fraction = 1F / (tabs.size - i)
-                Box(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth(fraction)
-                        .padding(5.dp)
-                        .border(
-                            border = BorderStroke(1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)),
-                            shape = RoundedCornerShape(1)
-                        )
+                        .fillMaxHeight()
+                        .padding(3.dp)
                 ) {
-                    tab()
+                    Button(
+                        onClick = { tabs.remove(tab) },
+                        modifier = Modifier.align(Alignment.End).padding(bottom = 5.dp)
+                    ) {}
+                    Box(
+                        modifier = Modifier
+                            .border(
+                                border = BorderStroke(
+                                    1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+                                ),
+                                shape = RoundedCornerShape(1)
+                            )
+                    ) {
+                        tab()
+                    }
                 }
             }
         }
