@@ -17,7 +17,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.loadImageBitmap
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import diary.ui.Link
@@ -112,41 +114,64 @@ class NotesTab(
                     .padding(vertical = 4.dp)
                     .fillMaxWidth(0.75F)
             ) {
-                TextButton(
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .wrapContentSize()
-                        .border(
-                            BorderStroke(
-                                1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
-                            )
-                        )
-                        .align(Alignment.End),
-                    onClick = { cells.removeAt(iCell) }
-                ) {
-                    Text("X")
-                }
 
-                // TODO mb move to cell and make cell name immutable
-                var text by remember { mutableStateOf(cell.name) }
-                BasicTextField(
-                    modifier = Modifier
-                        .padding(2.dp)
-                        .border(
-                            BorderStroke(
-                                1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
-                            )
-                        )
-                        .wrapContentSize(),
-                    value = text,
-                    textStyle = TextStyle(fontSize = 15.sp),
-                    singleLine = true,
-                    onValueChange = {
-                        text = it
-                        cell.name = it
-                        cell.name = it
-                    },
+// <<<<<<< feature/sketch-cell-background-image
+//                 // TODO mb move to cell and make cell name immutable
+//                 var text by remember { mutableStateOf(cell.name) }
+//                 BasicTextField(
+//                     modifier = Modifier
+//                         .padding(2.dp)
+//                         .border(
+//                             BorderStroke(
+//                                 1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+//                             )
+//                         )
+//                         .wrapContentSize(),
+//                     value = text,
+//                     textStyle = TextStyle(fontSize = 15.sp),
+//                     singleLine = true,
+//                     onValueChange = {
+//                         text = it
+//                         cell.name = it
+//                         cell.name = it
+//                     },
+// =======
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+//                    horizontalArrangement = Arrangement.spacedBy(100.dp),
+                    modifier = Modifier.padding(bottom = 5.dp).fillMaxWidth()
+// >>>>>>> dev
                 )
+                {
+                    // TODO mb move to cell and make cell name immutable
+                    var text by remember { mutableStateOf(cell.name) }
+                    BasicTextField(
+                        modifier = Modifier
+                            .padding(top = 5.dp)
+                            .align(Alignment.Bottom)
+                            .border(
+                                BorderStroke(
+                                    1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+                                )
+                            )
+                            .wrapContentSize(),
+                        value = text,
+                        textStyle = TextStyle(fontSize = 15.sp),
+                        singleLine = true,
+                        onValueChange = {
+                            text = it
+                            cell.name = it
+                        },
+                    )
+                    Button(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .height(25.dp),
+                        onClick = { cells.removeAt(iCell) }
+                    ) {
+                        Text("x", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
 
                 Box(contentAlignment = Alignment.Center) {
                     block()
@@ -212,15 +237,14 @@ class NotesTab(
         Button(
             modifier = Modifier
                 .wrapContentSize()
-                .padding(7.dp)
-                .border(
-                    BorderStroke(
-                        1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
-                    )
-                ),
+                .padding(5.dp)
+                .height(25.dp),
             onClick = onClick,
+            shape = MaterialTheme.shapes.small,
+//            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.8f)),
+//            border = ()
         ) {
-            Text(text, fontSize = 10.sp)
+            Text(text, fontSize = 8.sp, color = Color.White)
         }
     }
 
