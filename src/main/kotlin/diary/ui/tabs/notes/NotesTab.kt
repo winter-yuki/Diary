@@ -12,11 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -115,32 +110,25 @@ class NotesTab(
                     .fillMaxWidth(0.75F)
             ) {
 
-// <<<<<<< feature/sketch-cell-background-image
-//                 // TODO mb move to cell and make cell name immutable
-//                 var text by remember { mutableStateOf(cell.name) }
-//                 BasicTextField(
-//                     modifier = Modifier
-//                         .padding(2.dp)
-//                         .border(
-//                             BorderStroke(
-//                                 1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
-//                             )
-//                         )
-//                         .wrapContentSize(),
-//                     value = text,
-//                     textStyle = TextStyle(fontSize = 15.sp),
-//                     singleLine = true,
-//                     onValueChange = {
-//                         text = it
-//                         cell.name = it
-//                         cell.name = it
-//                     },
-// =======
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-//                    horizontalArrangement = Arrangement.spacedBy(100.dp),
-                    modifier = Modifier.padding(bottom = 5.dp).fillMaxWidth()
-// >>>>>>> dev
+                // TODO mb move to cell and make cell name immutable
+                var text by remember { mutableStateOf(cell.name) }
+                BasicTextField(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .border(
+                            BorderStroke(
+                                1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+                            )
+                        )
+                        .wrapContentSize(),
+                    value = text,
+                    textStyle = TextStyle(fontSize = 15.sp),
+                    singleLine = true,
+                    onValueChange = {
+                        text = it
+                        cell.name = it
+                        cell.name = it
+                    },
                 )
                 {
                     // TODO mb move to cell and make cell name immutable
@@ -148,7 +136,7 @@ class NotesTab(
                     BasicTextField(
                         modifier = Modifier
                             .padding(top = 5.dp)
-                            .align(Alignment.Bottom)
+//                            .align(Alignment.Bottom)
                             .border(
                                 BorderStroke(
                                     1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
