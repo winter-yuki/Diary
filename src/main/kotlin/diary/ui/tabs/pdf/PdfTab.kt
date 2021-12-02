@@ -10,7 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.toComposeBitmap
+import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.unit.dp
 import diary.ui.Link
@@ -19,6 +19,8 @@ import diary.ui.tabs.Tab
 import diary.utils.makeAlertDialogStateful
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.rendering.PDFRenderer
+import org.jetbrains.skia.Bitmap
+import org.jetbrains.skiko.toBitmap
 import java.nio.file.Path
 
 class PdfTab(
@@ -103,7 +105,10 @@ class PdfTab(
 
     // TODO remove extra padding
     private fun render(): ImageBitmap =
-        renderer.renderImage(currPage).toComposeBitmap()
+        renderer.renderImage(currPage).toComposeImageBitmap()
+
+    private fun renderBasicBitmap(): Bitmap =
+        renderer.renderImage(currPage).toBitmap()
 
     companion object {
         fun from(path: Path, tabManager: TabManager, currPage: Int = 0) =

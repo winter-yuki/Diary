@@ -4,24 +4,34 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import org.jetbrains.skia.Image
 import java.nio.file.Path
+import kotlin.io.path.readBytes
 
 class SketchCell(
     override var name: CellName = CellName(""),
     path: MutableState<androidx.compose.ui.graphics.Path> =
-        mutableStateOf(androidx.compose.ui.graphics.Path())
+        mutableStateOf(androidx.compose.ui.graphics.Path()),
+    backgroundImage: Path? = null
 ) : AbstractCell() {
 
     private val pathState = path
     private val path by path
+    private val bitmap = backgroundImage?.let { path ->
+        val bytes = path.readBytes()
+        val image = Image.makeFromEncoded(bytes)
+        image.toComposeImageBitmap()
+    }
 
     override fun save(path: Path) {
         println("Save sketch $path") // TODO
@@ -35,7 +45,7 @@ class SketchCell(
         var action by mutableStateOf<Offset?>(null)
         Canvas(
             modifier = Modifier
-                .height(250.dp)
+                .chooseSize()
                 .fillMaxWidth()
                 .pointerInput(Unit) {
                     detectDragGestures(
@@ -52,12 +62,17 @@ class SketchCell(
                     }
                 }
         ) {
+            bitmap?.let { drawImage(it) }
             drawPath()
             action?.let {
                 drawPath()
             }
         }
     }
+
+    private fun Modifier.chooseSize(): Modifier =
+        if (bitmap == null) height(250.dp)
+        else size(width = bitmap.width.dp, height = bitmap.height.dp)
 
     private fun DrawScope.drawPath() {
         drawPath(

@@ -35,6 +35,7 @@ import diary.utils.callJFileChooser
 import diary.utils.removeIfExists
 import java.nio.file.Files.createDirectory
 import java.nio.file.Path
+import javax.swing.filechooser.FileNameExtensionFilter
 import kotlin.io.path.createFile
 import kotlin.io.path.extension
 
@@ -70,7 +71,10 @@ class NotesTab(
             onClick = {
                 val path = callJFileChooser(
                     title = "Select File Path",
-                    mode = JFileChooserMode.Save
+                    mode = JFileChooserMode.Save,
+                    filter = FileNameExtensionFilter(
+                        "Diary Files", "diary"
+                    )
                 )?.let { path ->
                     save(path)
                     this@NotesTab.path = path
@@ -179,6 +183,15 @@ class NotesTab(
         }
         CellButton("Add sketch") {
             cells.add(iCell + 1, SketchCell())
+        }
+        CellButton("Add image") {
+            val path = callJFileChooser(
+                "Select Image",
+                filter = FileNameExtensionFilter(
+                    "Image Files", "png", "jpeg", "jpg"
+                )
+            )
+            cells.add(iCell + 1, SketchCell(backgroundImage = path))
         }
         // TODO refactor
 //        when (cell) {

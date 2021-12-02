@@ -15,6 +15,7 @@ import diary.ui.tabs.pdf.PdfTab
 import diary.utils.FileType
 import diary.utils.callJFileChooser
 import diary.utils.makeAlertDialogStateful
+import javax.swing.filechooser.FileNameExtensionFilter
 
 @Composable
 fun TopMenu(tabManager: TabManager) {
@@ -29,7 +30,12 @@ fun TopMenu(tabManager: TabManager) {
             tabManager.add(notes) { tooManyTabs = true }
         }
         MenuButton("Open") {
-            val path = callJFileChooser("Select File to Open") ?: return@MenuButton
+            val path = callJFileChooser(
+                "Select File to Open",
+                filter = FileNameExtensionFilter(
+                    "Diary & PDF Files", "diary", "pdf"
+                )
+            ) ?: return@MenuButton
             val space = when (FileType.of(path)) {
                 FileType.Diary -> NotesTab.from(path, tabManager)
                 FileType.Pdf -> PdfTab.from(path, tabManager)
