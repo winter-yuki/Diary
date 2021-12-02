@@ -1,31 +1,47 @@
 package diary.ui.tabs.notes
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.key.Key.Companion.R
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.res.loadImageBitmap
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.useResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import diary.ui.TabManager
 import diary.ui.UIComponent
+import diary.ui.tabs.pdf.PdfTab
 import kotlinx.coroutines.runBlocking
+import org.apache.pdfbox.pdmodel.PDDocument
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.writeText
 
@@ -127,26 +143,39 @@ class RenderedTextCell(
                     .getStringAnnotations(start = offset, end = offset)
                     .lastOrNull()?.item
                 val targetName = linkAnnotation?.substring(1)
-                runBlocking { scrollState.scrollToItem( cells.indexOfFirst { it.name == targetName } ) }
+                val i = cells.indexOfFirst { it.name == targetName }
+                if (i > -1) runBlocking { scrollState.scrollToItem(i) }
             }
         }
     }
 }
 
-class SketchCell(private val initName: String = "", override var name: String = "") : AbstractCell() {
+class SketchCell(
+    private val initName: String = "",
+    override var name: String = "",
+    val backgroundImage: String?
+) : AbstractCell() {
     override fun save(path: Path) {
         println("Save sketch $path") // TODO
     }
-
 
     @Composable
     override operator fun invoke() = cell {
         var offsetX by remember { mutableStateOf(0f) }
         var offsetY by remember { mutableStateOf(0f) }
-        var action by mutableStateOf<Offset?>(null)
+        var action by remember { mutableStateOf<Offset?>(null) }
         val path = androidx.compose.ui.graphics.Path()
+
+//        if (backgroundImage != File("null")) { }
+//            var imageBitmap = remember {
+//                org.jetbrains.skija.Image.makeFromEncoded(backgroundImage.readBytes()).asImageBitmap()
+//            }
+//            Image(imageBitmap, "background")
+//        } else println("No image")
+
         Canvas(
             modifier = Modifier
+                .clipToBounds()
                 .height(250.dp)
                 .fillMaxWidth()
                 .pointerInput(Unit) {
@@ -164,6 +193,16 @@ class SketchCell(private val initName: String = "", override var name: String = 
                     }
                 }
         ) {
+            if (backgroundImage != "null") {
+                drawImage(org.jetbrains.skija.Image.makeFromEncoded(File(backgroundImage.toString()).readBytes()).asImageBitmap())
+            }
+
+//            drawRect(
+//                color=Color.Red,
+//                topLeft = Offset(0f,0f),
+//                size = Size(width=100f, height = 100f)
+//            )
+
             action?.let {
                 drawPath(
                     path = path,
@@ -173,6 +212,11 @@ class SketchCell(private val initName: String = "", override var name: String = 
                 )
             }
         }
+
+//        mainCanvas
+
+//        if (backgroundImage != File("null")) {
+//        }
 
         // TODO resize cell bar appearing on focus #9
         // TODO clickable link: click -> jump #11

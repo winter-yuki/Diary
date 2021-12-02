@@ -12,6 +12,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -20,11 +22,14 @@ import diary.ui.TabManager
 import diary.ui.tabs.Tab
 import diary.utils.JFileChooserMode
 import diary.utils.callJFileChooser
+import diary.utils.callJImageChooser
 import diary.utils.removeIfExists
+import java.io.File
 import java.nio.file.Files.createDirectory
 import java.nio.file.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.extension
+import androidx.compose.runtime.remember as remember
 
 class NotesTab(
     private val cells: SnapshotStateList<Cell> = mutableStateListOf(),
@@ -142,15 +147,21 @@ class NotesTab(
                     },
                 )
 
-                block()
+                Box ( contentAlignment = Alignment.Center ) {
+                    block()
+                }
 
                 Row {
                     CellButton("Add text") {
                         cells.add(iCell + 1, TextCell())
                     }
+
                     CellButton("Add sketch") {
-                        cells.add(iCell + 1, SketchCell())
+
+                        var backgroundImage = File(callJImageChooser("Choose background image").toString()).toString()
+                        cells.add(iCell + 1, SketchCell(backgroundImage = backgroundImage))
                     }
+
                     // TODO refactor
                     when (cell) {
                         is TextCell -> CellButton("Render") {

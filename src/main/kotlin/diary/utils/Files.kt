@@ -48,6 +48,26 @@ fun callJFileChooser(title: String, mode: JFileChooserMode = JFileChooserMode.Op
     }
 }
 
+fun callJImageChooser(title: String, mode: JFileChooserMode = JFileChooserMode.Open): Path? {
+    val chooser = JFileChooser().apply {
+        dialogTitle = title
+
+        if (mode == JFileChooserMode.Open) {
+            fileFilter = FileNameExtensionFilter("png", "jpeg", "jpg")
+        }
+
+//        fileSelectionMode = JFileChooser.FILES_AND_DIRECTORIES
+    }
+    return chooser.run {
+        val rc = when (mode) {
+            JFileChooserMode.Open -> showOpenDialog(null)
+            JFileChooserMode.Save -> showSaveDialog(null)
+        }
+        if (rc != JFileChooser.APPROVE_OPTION) null
+        else selectedFile.toPath()
+    }
+}
+
 enum class FileType {
     Unknown, Diary, Pdf;
 
