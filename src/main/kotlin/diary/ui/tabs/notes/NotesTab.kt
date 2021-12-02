@@ -109,7 +109,6 @@ class NotesTab(
             ) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
-//                    horizontalArrangement = Arrangement.spacedBy(100.dp),
                     modifier = Modifier.padding(bottom = 5.dp).fillMaxWidth()
                 ) {
 
