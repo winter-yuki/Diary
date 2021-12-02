@@ -193,6 +193,19 @@ class NotesTab(
             )
             cells.add(iCell + 1, SketchCell(backgroundImage = path))
         }
+        CellButton("⇧")
+        {
+            if (iCell > 0) {
+                cells.removeAt(iCell)
+                cells.add(iCell - 1, cell)
+            }
+        }
+        CellButton("⇩")
+        {
+            if (iCell < cells.size)
+            cells.removeAt(iCell)
+            cells.add(iCell + 1, cell)
+        }
         // TODO refactor
 //        when (cell) {
 //            is TextCell -> CellButton("Render") {
