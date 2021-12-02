@@ -89,9 +89,9 @@ class RenderedTextCell(
     val text: String = "",
     override var name: String = "",
     val scrollState: LazyListState,
-    val cells: SnapshotStateList<Cell>
-//    private val notesPath: Path, // TODO
-//    private val tabManager: TabManager
+    val cells: SnapshotStateList<Cell>,
+//    private val notesPath: Path,
+    private val tabManager: TabManager
 ) : AbstractCell() {
 
     override fun save(path: Path) {

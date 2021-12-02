@@ -1,5 +1,7 @@
 package diary.ui.tabs.notes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -8,13 +10,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import diary.ui.Link
@@ -115,21 +117,6 @@ class NotesTab(
 
                 // TODO mb move to cell and make cell name immutable
                 var text by remember { mutableStateOf(cell.name) }
-                Row {
-                    Text("Name: ", fontSize = 15.sp)
-                    BasicTextField(
-                        modifier = Modifier
-                            .fillMaxWidth(0.2f)
-                            .fillMaxHeight(0.1f),
-                        value = text,
-                        textStyle = TextStyle( fontSize = 15.sp ),
-                        singleLine = true,
-                        onValueChange = {
-                            text = it
-                            cell.name = it
-                        }
-                    )
-                }
                 BasicTextField(
                     modifier = Modifier
 //                        .fillMaxWidth(0.5f)
@@ -166,7 +153,13 @@ class NotesTab(
                             cells.removeAt(iCell)
                             cells.add(
                                 iCell,
-                                RenderedTextCell(text = cell.text, name = cell.name, scrollState = state, cells = cells)
+                                RenderedTextCell(
+                                    text = cell.text,
+                                    name = cell.name,
+                                    scrollState = state,
+                                    cells = cells,
+                                    tabManager = tabManager
+                                )
                             )
                         }
                         is RenderedTextCell -> CellButton("Edit") {
