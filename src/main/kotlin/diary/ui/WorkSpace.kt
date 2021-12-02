@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -18,12 +19,11 @@ import diary.utils.makeAlertDialogStateful
 
 @Composable
 fun WorkSpace(tabManager: TabManager) {
-    TooManyTabsAlert(tabManager)
     if (tabManager.tabs.isEmpty()) {
         Empty()
         return
     }
-    Row {
+    Row(modifier = Modifier.padding(start = 5.dp, end = 5.dp, bottom = 5.dp)) {
         tabManager.tabs.forEachIndexedCo { i, tab ->
             val fraction = 1F / (tabManager.tabs.size - i)
             Column(
@@ -75,16 +75,22 @@ fun ColumnScope.RemoveButton(tab: Tab, onRemove: (Tab) -> Unit) {
 
 @Composable
 fun TabBox(tab: Tab) {
-    Box(
-        modifier = Modifier
-            .border(
-                border = BorderStroke(
-                    1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
-                ),
-                shape = RoundedCornerShape(1)
-            )
-            .padding(5.dp)
-    ) {
-        tab()
+    val border = BorderStroke(
+        1.dp,
+        MaterialTheme
+            .colors.primary
+            .copy(alpha = 0.2f)
+    )
+    Surface(shape = MaterialTheme.shapes.large, elevation = 12.dp) {
+        Box(
+            modifier = Modifier
+                .border(
+                    border = border,
+                    shape = RoundedCornerShape(1)
+                )
+                .padding(5.dp)
+        ) {
+            tab()
+        }
     }
 }
