@@ -29,6 +29,7 @@ import diary.utils.removeIfExists
 import java.nio.file.Files.createDirectory
 import java.nio.file.Path
 import kotlin.io.path.createFile
+import kotlin.io.path.extension
 
 class NotesTab(
     private val cells: SnapshotStateList<Cell> = mutableStateListOf(),
@@ -188,7 +189,7 @@ class NotesTab(
         path.removeIfExists()
         val diaryPath = Path.of(
             // TODO make Path extension
-            if (path.toFile().endsWith(".diary")) path.toString()
+            if (path.extension == "diary") path.toString()
             else "$path.diary"
         )
         val dir = createDirectory(diaryPath)
