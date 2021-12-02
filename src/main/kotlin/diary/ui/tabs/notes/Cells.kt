@@ -128,7 +128,8 @@ class RenderedTextCell(
                     .getStringAnnotations(start = offset, end = offset)
                     .lastOrNull()?.item
                 val targetName = linkAnnotation?.substring(1)
-                runBlocking { scrollState.scrollToItem( cells.indexOfFirst { it.name == targetName } ) }
+                val i = cells.indexOfFirst { it.name == targetName }
+                if (i > -1) runBlocking { scrollState.scrollToItem( cells.indexOfFirst { it.name == targetName } ) }
             }
         }
     }
@@ -168,7 +169,7 @@ class SketchCell(private val initName: String = "", override var name: String = 
             action?.let {
                 drawPath(
                     path = path,
-                    color = Color.Magenta,
+                    color = Color(0xFF37596D), // Color.Magenta,
                     alpha = 1f,
                     style = Stroke(3f)
                 )
