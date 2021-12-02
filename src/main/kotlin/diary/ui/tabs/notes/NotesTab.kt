@@ -1,18 +1,13 @@
 package diary.ui.tabs.notes
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -57,7 +52,7 @@ class NotesTab(
                 cells += TextCell()
             }
             Column {
-                Button(
+                TextButton(
                     onClick = {
                         val path = callJFileChooser(
                             title = "Select File Path",
@@ -109,13 +104,20 @@ class NotesTab(
                     .padding(vertical = 4.dp)
                     .fillMaxWidth(0.75F)
             ) {
-                Button(
+                TextButton(
                     modifier = Modifier
                         .padding(5.dp)
-                        .size(width = 30.dp, height = 25.dp)
+                        .wrapContentSize()
+                        .border(
+                            BorderStroke(
+                                1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+                            )
+                        )
                         .align(Alignment.End),
                     onClick = { cells.removeAt(iCell) }
-                ) {}
+                ) {
+                    Text("X")
+                }
 
                 // TODO mb move to cell and make cell name immutable
                 var text by remember { mutableStateOf(cell.name) }
@@ -155,7 +157,10 @@ class NotesTab(
                             cells.removeAt(iCell)
                             cells.add(
                                 iCell,
-                                RenderedTextCell(text = cell.text, name = cell.name, scrollState = state, cells = cells)
+                                RenderedTextCell(
+                                    text = cell.text, name = cell.name,
+                                    scrollState = state, cells = cells
+                                )
                             )
                         }
                         is RenderedTextCell -> CellButton("Edit") {
@@ -178,7 +183,12 @@ class NotesTab(
         Button(
             modifier = Modifier
                 .wrapContentSize()
-                .padding(10.dp),
+                .padding(7.dp)
+                .border(
+                    BorderStroke(
+                        1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+                    )
+                ),
             onClick = onClick,
         ) {
             Text(text, fontSize = 10.sp)
