@@ -41,7 +41,7 @@ class TabManager(
     override operator fun invoke() {
         makeAlertDialog(
             title = "Too many tabs opened",
-            text = "No more then $maxNTabs can be opened at once",
+            text = "No more than $maxNTabs can be opened at once",
             state = tooManyTabsDialog
         )
         if (tabs.isEmpty()) {

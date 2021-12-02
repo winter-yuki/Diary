@@ -95,85 +95,94 @@ class NotesTab(
 
     @Composable
     private fun CellBox(iCell: Int, cell: Cell, state: LazyListState, block: @Composable () -> Unit) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Row(
             modifier = Modifier.fillMaxWidth().fillMaxHeight()
         ) {
             Column(
-                modifier = Modifier
-                    .padding(vertical = 4.dp)
-                    .fillMaxWidth(0.75F)
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth().fillMaxHeight()
             ) {
-                TextButton(
+                Column(
                     modifier = Modifier
-                        .padding(5.dp)
-                        .wrapContentSize()
-                        .border(
-                            BorderStroke(
-                                1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
-                            )
-                        )
-                        .align(Alignment.End),
-                    onClick = { cells.removeAt(iCell) }
+                        .padding(vertical = 4.dp)
+                        .fillMaxWidth(0.75F)
                 ) {
-                    Text("X")
-                }
-
-                // TODO mb move to cell and make cell name immutable
-                var text by remember { mutableStateOf(cell.name) }
-                BasicTextField(
-                    modifier = Modifier
-//                        .fillMaxWidth(0.5f)
-//                        .fillMaxHeight(0.1f)
-                        .padding(2.dp)
-                        .border(
-                            BorderStroke(
-                                1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
-                            )
-                        )
-                        .wrapContentSize(),
-//                        .background(color = Color.),
-                    value = text,
-                    textStyle = TextStyle(fontSize = 15.sp),
-                    singleLine = true,
-                    onValueChange = {
-                        text = it
-                        cell.name = it
-                    },
-                )
-
-                block()
-
-                Row {
-                    CellButton("Add text") {
-                        cells.add(iCell + 1, TextCell())
-                    }
-                    CellButton("Add sketch") {
-                        cells.add(iCell + 1, SketchCell())
-                    }
-                    // TODO refactor
-                    when (cell) {
-                        is TextCell -> CellButton("Render") {
-                            cells.removeAt(iCell)
-                            cells.add(
-                                iCell,
-                                RenderedTextCell(
-                                    text = cell.text,
-                                    name = cell.name,
-                                    scrollState = state,
-                                    cells = cells,
-                                    tabManager = tabManager
+                    TextButton(
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .wrapContentSize()
+                            .border(
+                                BorderStroke(
+                                    1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
                                 )
                             )
-                        }
-                        is RenderedTextCell -> CellButton("Edit") {
-                            cells.removeAt(iCell)
-                            cells.add(
-                                iCell,
-                                TextCell(_text = cell.text).apply {
-                                    name = cell.name
-                                }
+                            .align(Alignment.End),
+                        onClick = { cells.removeAt(iCell) }
+                    ) {
+                        Text("X")
+                    }
+
+                    // TODO mb move to cell and make cell name immutable
+                    var text by remember { mutableStateOf(cell.name) }
+                    BasicTextField(
+                        modifier = Modifier
+//                        .fillMaxWidth(0.5f)
+//                        .fillMaxHeight(0.1f)
+                            .padding(start = 26.dp, 2.dp)
+                            .border(
+                                BorderStroke(
+                                    1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+                                )
                             )
+                            .wrapContentSize(),
+//                        .background(color = Color.),
+                        value = text,
+                        textStyle = TextStyle(fontSize = 15.sp),
+                        singleLine = true,
+                        onValueChange = {
+                            text = it
+                            cell.name = it
+                        },
+                    )
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Box(modifier = Modifier.align(Alignment.CenterVertically)) {
+                            Text((iCell + 1).toString() + ".")
+                        }
+                        block()
+                    }
+
+                    Row (modifier = Modifier.padding(start = 20.dp)){
+                        CellButton("Add text") {
+                            cells.add(iCell + 1, TextCell())
+                        }
+                        CellButton("Add sketch") {
+                            cells.add(iCell + 1, SketchCell())
+                        }
+                        // TODO refactor
+                        when (cell) {
+                            is TextCell -> CellButton("Render") {
+                                cells.removeAt(iCell)
+                                cells.add(
+                                    iCell,
+                                    RenderedTextCell(
+                                        text = cell.text,
+                                        name = cell.name,
+                                        scrollState = state,
+                                        cells = cells,
+                                        tabManager = tabManager
+                                    )
+                                )
+                            }
+                            is RenderedTextCell -> CellButton("Edit") {
+                                cells.removeAt(iCell)
+                                cells.add(
+                                    iCell,
+                                    TextCell(_text = cell.text).apply {
+                                        name = cell.name
+                                    }
+                                )
+                            }
                         }
                     }
                 }
