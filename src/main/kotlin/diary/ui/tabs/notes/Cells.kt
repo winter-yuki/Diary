@@ -127,7 +127,7 @@ class RenderedTextCell(
                     .getStringAnnotations(start = offset, end = offset)
                     .lastOrNull()?.item
                 val targetName = linkAnnotation?.substring(1)
-                runBlocking { scrollState.scrollToItem( cells.indexOfFirst { it.name == targetName } ) }
+                runBlocking { scrollState.scrollToItem(cells.indexOfFirst { it.name == targetName }) }
             }
         }
     }

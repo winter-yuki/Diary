@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import diary.ui.Link
 import diary.ui.TabManager
 import diary.ui.tabs.Tab
-import diary.utils.makeAlertDialog
+import diary.utils.makeAlertDialogStateful
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.rendering.PDFRenderer
 import java.nio.file.Path
@@ -42,7 +42,7 @@ class PdfTab(
     @Composable
     override fun invoke() {
         Box(modifier = Modifier.fillMaxSize().padding(10.dp)) {
-            var linkCreatedDialog by makeAlertDialog(
+            var linkCreatedDialog by makeAlertDialogStateful(
                 title = "Link created!",
                 text = "Link created and now you can add it to your notes"
             )

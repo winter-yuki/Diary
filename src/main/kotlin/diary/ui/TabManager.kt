@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import diary.ui.tabs.Tab
+import diary.utils.AlertDialog
 import diary.utils.forEachIndexedCo
-import diary.utils.makeAlertDialog
 
 class TabManager(
     private val tabs: MutableList<Tab> = mutableStateListOf()
@@ -39,10 +39,10 @@ class TabManager(
 
     @Composable
     override operator fun invoke() {
-        makeAlertDialog(
+        AlertDialog(
             title = "Too many tabs opened",
             text = "No more then $maxNTabs can be opened at once",
-            state = tooManyTabsDialog
+            open = tooManyTabsDialog
         )
         if (tabs.isEmpty()) {
             EmptyTab()

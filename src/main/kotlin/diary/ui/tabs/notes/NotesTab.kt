@@ -1,13 +1,19 @@
 package diary.ui.tabs.notes
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -70,7 +76,7 @@ class NotesTab(
                     modifier = Modifier.fillMaxSize().padding(end = 12.dp),
                     state = state
                 ) {
-                    itemsIndexed(cells) { i, cell ->
+                    itemsIndexed(cells, key = { i, _ -> i }) { i, cell ->
                         CellBox(i, cell, state) { cell() }
                     }
                 }
