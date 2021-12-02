@@ -17,15 +17,8 @@ import diary.utils.forEachIndexedCo
 import diary.utils.makeAlertDialogStateful
 
 @Composable
-fun TooManytabsAlert(tabManager: TabManager) =
-    makeAlertDialogStateful(
-        title = "Too many tabs opened",
-        text = "No more then ${tabManager.maxNTabs} can be opened at once",
-    )
-
-@Composable
 fun WorkSpace(tabManager: TabManager) {
-    TooManytabsAlert(tabManager)
+    TooManyTabsAlert(tabManager)
     if (tabManager.tabs.isEmpty()) {
         Empty()
         return
@@ -47,6 +40,13 @@ fun WorkSpace(tabManager: TabManager) {
         }
     }
 }
+
+@Composable
+fun TooManyTabsAlert(tabManager: TabManager) =
+    makeAlertDialogStateful(
+        title = "Too many tabs opened",
+        text = "No more then ${tabManager.maxNTabs} can be opened at once",
+    )
 
 @Composable
 private fun Empty() {

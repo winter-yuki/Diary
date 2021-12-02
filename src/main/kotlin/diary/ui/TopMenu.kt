@@ -21,7 +21,7 @@ fun TopMenu(tabManager: TabManager) {
         title = "Wrong file type",
         text = "Only PDF and Diary files are supported"
     )
-    var tooManyTabs by TooManytabsAlert(tabManager)
+    var tooManyTabs by TooManyTabsAlert(tabManager)
     Row {
         MenuButton("New") {
             val notes = NotesTab(tabManager = tabManager)
