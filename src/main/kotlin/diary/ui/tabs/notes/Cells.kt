@@ -24,16 +24,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import diary.ui.TabManager
-import diary.ui.UIComponent
 import kotlinx.coroutines.runBlocking
 import java.nio.file.Path
 import kotlin.io.path.writeText
 
 class CellName(val name: String)
 
-interface Cell : UIComponent {
+interface Cell {
     var name: String
     fun save(path: Path)
+
+    @Composable
+    operator fun invoke()
 
     companion object {
         fun of(path: Path): Cell {

@@ -37,17 +37,20 @@ class NotesTab(
     private val tabManager: TabManager,
     var path: Path = Path.of("")
 ) : Tab {
+
     // TODO change id to something better: new notes are the same
     override val id: Tab.Id get() = Tab.Id(path)
-    private val navigateDstName = mutableStateOf<Int?>(null)
+
+//    private val navigateDstName = mutableStateOf<Int?>(null)
 
     override fun navigate(link: Link) {
         require(link is NotesLink)
-        val i = cells.indexOfFirst { it.name == link.cellName?.name }
-        println("i = $i") // TODO
-        if (i != -1) {
-            navigateDstName.value = i
-        }
+//        val i = cells.indexOfFirst { it.name == link.cellName?.name }
+//        println("i = $i") // TODO
+//        if (i != -1) {
+//            navigateDstName.value = i
+//        }
+        // TODO
     }
 
     @Composable
