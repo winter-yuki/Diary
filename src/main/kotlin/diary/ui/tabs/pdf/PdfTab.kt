@@ -1,6 +1,6 @@
 package diary.ui.tabs.pdf
 
-import androidx.compose.foundation.ExperimentalDesktopApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.mouseClickable
@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeBitmap
+import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.unit.dp
 import diary.ui.Link
 import diary.ui.TabManager
@@ -38,7 +39,7 @@ class PdfTab(
         _currPage.value = link.page ?: 0
     }
 
-    @OptIn(ExperimentalDesktopApi::class)
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun invoke() {
         Box(modifier = Modifier.fillMaxSize().padding(10.dp)) {
