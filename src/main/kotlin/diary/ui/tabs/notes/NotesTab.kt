@@ -158,8 +158,11 @@ class NotesTab(
                             cells.add(
                                 iCell,
                                 RenderedTextCell(
-                                    text = cell.text, name = cell.name,
-                                    scrollState = state, cells = cells
+                                    text = cell.text,
+                                    name = cell.name,
+                                    scrollState = state,
+                                    cells = cells,
+                                    tabManager = tabManager
                                 )
                             )
                         }

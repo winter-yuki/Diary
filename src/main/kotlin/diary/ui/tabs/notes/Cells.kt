@@ -89,9 +89,9 @@ class RenderedTextCell(
     val text: String = "",
     override var name: String = "",
     val scrollState: LazyListState,
-    val cells: SnapshotStateList<Cell>
-//    private val notesPath: Path, // TODO
-//    private val tabManager: TabManager
+    val cells: SnapshotStateList<Cell>,
+//    private val notesPath: Path,
+    private val tabManager: TabManager
 ) : AbstractCell() {
 
     override fun save(path: Path) {
@@ -125,14 +125,9 @@ class RenderedTextCell(
             ) { offset ->
                 val linkAnnotation = linkedText
                     .getStringAnnotations(start = offset, end = offset)
-                    .lastOrNull()?.item //?: return@ClickableText
-//                runNavigate = CellName(linkAnnotation.substring(1))
+                    .lastOrNull()?.item
                 val targetName = linkAnnotation?.substring(1)
-                println("Clicked $targetName")
                 runBlocking { scrollState.scrollToItem( cells.indexOfFirst { it.name == targetName } ) }
-
-//                runBlocking { scrollState.scrollToItem(0) }
-//                NotesLink(path = notesPath, cellName = CellName(name)).navigate(tabManager)
             }
         }
     }
@@ -142,6 +137,7 @@ class SketchCell(private val initName: String = "", override var name: String = 
     override fun save(path: Path) {
         println("Save sketch $path") // TODO
     }
+
 
     @Composable
     override operator fun invoke() = cell {
