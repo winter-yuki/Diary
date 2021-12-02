@@ -45,7 +45,7 @@ class TabManager(
             open = tooManyTabsDialog
         )
         if (tabs.isEmpty()) {
-            EmptyTab()
+            Empty()
             return
         }
         Row {
@@ -57,29 +57,8 @@ class TabManager(
                         .fillMaxHeight()
                         .padding(5.dp)
                 ) {
-                    TextButton(
-                        onClick = { tabs.remove(tab) },
-                        modifier = Modifier
-                            .align(Alignment.End)
-                            .padding(bottom = 5.dp)
-                            .border(
-                                BorderStroke(
-                                    1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
-                                )
-                            )
-                    ) {
-                        Text("X")
-                    }
-                    Box(
-                        modifier = Modifier
-                            .border(
-                                border = BorderStroke(
-                                    1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
-                                ),
-                                shape = RoundedCornerShape(1)
-                            )
-                            .padding(5.dp)
-                    ) {
+                    RemoveButton(tab)
+                    TabBox {
                         tab()
                     }
                 }
@@ -88,12 +67,45 @@ class TabManager(
     }
 
     @Composable
-    private fun EmptyTab() {
+    private fun Empty() {
         Box(Modifier.fillMaxSize()) {
             Column(Modifier.align(Alignment.Center)) {
                 Text("Welcome!", fontSize = 20.sp)
                 Text("Press New to create new notes \nor Open to open existing notes of pdf")
             }
+        }
+    }
+
+    @Composable
+    fun ColumnScope.RemoveButton(tab: Tab) {
+        TextButton(
+            onClick = { tabs.remove(tab) },
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(bottom = 5.dp)
+                .border(
+                    BorderStroke(
+                        1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+                    )
+                )
+        ) {
+            Text("X")
+        }
+    }
+
+    @Composable
+    fun TabBox(block: @Composable () -> Unit) {
+        Box(
+            modifier = Modifier
+                .border(
+                    border = BorderStroke(
+                        1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+                    ),
+                    shape = RoundedCornerShape(1)
+                )
+                .padding(5.dp)
+        ) {
+            block()
         }
     }
 }
