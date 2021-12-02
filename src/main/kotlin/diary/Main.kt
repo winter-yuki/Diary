@@ -1,13 +1,13 @@
 package diary
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import diary.ui.Theme
-import diary.ui.TabManager
 import diary.ui.TopMenu
+import diary.ui.WorkSpace
+import diary.ui.rememberTabManager
 
 fun main() = application {
     Window(
@@ -21,12 +21,11 @@ fun main() = application {
         ),
         onCloseRequest = ::exitApplication,
     ) {
-        val tabManager = TabManager()
         Theme {
-//        MaterialTheme {
+            val tabManager = rememberTabManager()
             Column {
                 TopMenu(tabManager)
-                tabManager()
+                WorkSpace(tabManager)
             }
         }
     }

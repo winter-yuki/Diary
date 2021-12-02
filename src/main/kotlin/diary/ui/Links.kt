@@ -14,7 +14,7 @@ abstract class AbstractLink : Link {
             tab.navigate(this)
         } else {
             val newTab = createTab()
-            tabManager.add(newTab)
+//            tabManager.add(newTab) TODO
             newTab.navigate(this)
         }
     }

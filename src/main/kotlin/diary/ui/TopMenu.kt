@@ -1,6 +1,5 @@
 package diary.ui
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
@@ -10,27 +9,33 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import diary.ui.tabs.notes.NotesTab
 import diary.ui.tabs.pdf.PdfTab
 import diary.utils.FileType
 import diary.utils.callJFileChooser
-import diary.utils.makeAlertDialog
+import diary.utils.ui.makeAlertDialogStateful
+import javax.swing.filechooser.FileNameExtensionFilter
 
 @Composable
 fun TopMenu(tabManager: TabManager) {
-    var wrongFileTypeDialog by makeAlertDialog(
+    var wrongFileTypeDialog by makeAlertDialogStateful(
         title = "Wrong file type",
         text = "Only PDF and Diary files are supported"
     )
+    var tooManyTabs by TooManyTabsAlert(tabManager)
     Row {
         MenuButton("New") {
             val notes = NotesTab(tabManager = tabManager)
-            tabManager.add(notes)
+            tabManager.add(notes) { tooManyTabs = true }
         }
         MenuButton("Open") {
-            val path = callJFileChooser("Select File to Open") ?: return@MenuButton
+            val path = callJFileChooser(
+                "Select File to Open",
+                filter = FileNameExtensionFilter(
+                    "Diary & PDF Files", "diary", "pdf"
+                )
+            ) ?: return@MenuButton
             val space = when (FileType.of(path)) {
                 FileType.Diary -> NotesTab.from(path, tabManager)
                 FileType.Pdf -> PdfTab.from(path, tabManager)
@@ -39,7 +44,7 @@ fun TopMenu(tabManager: TabManager) {
                     return@MenuButton
                 }
             }
-            tabManager.add(space)
+            tabManager.add(space) { tooManyTabs = true }
         }
     }
 }
