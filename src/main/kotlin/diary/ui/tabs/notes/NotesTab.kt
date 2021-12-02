@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import diary.ui.Link
@@ -120,19 +121,21 @@ class NotesTab(
 
                 // TODO mb move to cell and make cell name immutable
                 var text by remember { mutableStateOf(cell.name) }
-                BasicTextField(
-                    modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .fillMaxHeight(0.1f)
-                        .background(color = Color.Gray),
-                    value = text,
-                    textStyle = TextStyle(fontSize = 10.sp),
-                    singleLine = true,
-                    onValueChange = {
-                        text = it
-                        cell.name = it
-                    }
-                )
+                Row {
+                    Text("Name: ", fontSize = 15.sp)
+                    BasicTextField(
+                        modifier = Modifier
+                            .fillMaxWidth(0.2f)
+                            .fillMaxHeight(0.1f),
+                        value = text,
+                        textStyle = TextStyle( fontSize = 15.sp ),
+                        singleLine = true,
+                        onValueChange = {
+                            text = it
+                            cell.name = it
+                        }
+                    )
+                }
 
                 block()
 
