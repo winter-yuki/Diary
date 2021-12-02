@@ -3,7 +3,6 @@ package diary.ui.tabs.notes
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
@@ -74,7 +73,13 @@ class NotesTab(
                     state = state
                 ) {
                     itemsIndexed(cells) { i, cell ->
-                        CellBox(i, cell, state = state) { cell() }
+                        CellBox(i, cell) { cell() }
+                    }
+                }
+                runBlocking {
+                    println("Run blocking") // TODO
+                    navigateDstName.value?.let {
+                        state.scrollToItem(it, 0)
                     }
                 }
             }
@@ -91,10 +96,7 @@ class NotesTab(
     }
 
     @Composable
-    private fun CellBox(
-        iCell: Int, cell: Cell, label: String = "",
-        state: LazyListState, block: @Composable () -> Unit
-    ) {
+    private fun CellBox(iCell: Int, cell: Cell, label: String = "", block: @Composable () -> Unit) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth().fillMaxHeight()
@@ -140,14 +142,7 @@ class NotesTab(
                             cells.removeAt(iCell)
                             cells.add(
                                 iCell,
-                                RenderedTextCell(text = cell.text) {
-                                    runBlocking {
-                                        println("Run blocking") // TODO
-                                        navigateDstName.value?.let {
-                                            state.scrollToItem(it, 0)
-                                        }
-                                    }
-                                }.apply {
+                                RenderedTextCell(text = cell.text, notesPath = path, tabManager = tabManager).apply {
                                     name = cell.name
                                 }
                             )

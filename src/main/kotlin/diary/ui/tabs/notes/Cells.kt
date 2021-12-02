@@ -21,6 +21,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import diary.ui.TabManager
 import diary.ui.UIComponent
 import java.nio.file.Path
 import kotlin.io.path.writeText
@@ -84,7 +85,8 @@ class TextCell(
 class RenderedTextCell(
     val text: String = "",
     override var name: String = "",
-    private val navigate: @Composable (CellName) -> Unit
+    private val notesPath: Path, // TODO
+    private val tabManager: TabManager
 ) : AbstractCell() {
 
     override fun save(path: Path) {
@@ -112,7 +114,6 @@ class RenderedTextCell(
         }
 
         Column {
-            var runNavigate by remember { mutableStateOf(CellName("")) }
             ClickableText(
                 modifier = Modifier.fillMaxWidth(),
                 text = linkedText
@@ -121,11 +122,9 @@ class RenderedTextCell(
                     .getStringAnnotations(start = offset, end = offset)
                     .lastOrNull()?.item ?: return@ClickableText
                 println("Clicked $linkAnnotation") // TODO
-                runNavigate = CellName(linkAnnotation.substring(1))
-            }
-            if (runNavigate.name.isNotEmpty()) {
-                println("rnNav = ${runNavigate.name}")
-                navigate(runNavigate)
+//                runNavigate = CellName(linkAnnotation.substring(1))
+                val name = linkAnnotation.substring(1)
+                NotesLink(path = notesPath, cellName = CellName(name)).navigate(tabManager)
             }
         }
     }
