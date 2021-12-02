@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.sp
 
 val Navy500 = Color(0xFF64869B)
 
-//val Navy700 = Color(0xFF37596D)
-val Navy700 = Color(0xffd11aff)
+val Navy700 = Color(0xFF37596D)
+//val Navy700 = Color(0xffd11aff)
 
 //val Navy900 = Color(0xFF073042)
 val Navy900 = Color(0xfff0b3ff)
