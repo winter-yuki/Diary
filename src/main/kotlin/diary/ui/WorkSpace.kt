@@ -33,9 +33,7 @@ fun WorkSpace(tabManager: TabManager) {
                     .padding(5.dp)
             ) {
                 RemoveButton(tab) { tabManager.tabs.remove(tab) }
-                TabBox {
-                    tab()
-                }
+                TabBox(tab)
             }
         }
     }
@@ -76,7 +74,7 @@ fun ColumnScope.RemoveButton(tab: Tab, onRemove: (Tab) -> Unit) {
 }
 
 @Composable
-fun TabBox(block: @Composable () -> Unit) {
+fun TabBox(tab: Tab) {
     Box(
         modifier = Modifier
             .border(
@@ -87,6 +85,6 @@ fun TabBox(block: @Composable () -> Unit) {
             )
             .padding(5.dp)
     ) {
-        block()
+        tab()
     }
 }
