@@ -10,10 +10,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -66,7 +63,11 @@ class NotesTab(
 
     @Composable
     private fun ColumnScope.SaveButton() {
-        TextButton(
+        Button(
+            modifier = Modifier
+                .align(Alignment.End)
+                .wrapContentSize()
+                .height(25.dp),
             onClick = {
                 val path = callJFileChooser(
                     title = "Select File Path",
@@ -76,9 +77,8 @@ class NotesTab(
                     this@NotesTab.path = path
                 }
             },
-            modifier = Modifier.align(Alignment.End).wrapContentSize()
         ) {
-            Text("Save", fontSize = 10.sp)
+            Text("Save", fontSize = 8.sp)
         }
     }
 
@@ -131,7 +131,7 @@ class NotesTab(
     private fun CellAboveButtons(iCell: Int, cell: Cell) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.padding(bottom = 5.dp).fillMaxWidth()
+            modifier = Modifier.padding(bottom = 5.dp, top = 10.dp).fillMaxWidth()
         ) {
             val text = remember { mutableStateOf(cell.name) }
             CellNameField(text)
@@ -141,23 +141,21 @@ class NotesTab(
 
     @Composable
     private fun RowScope.CellNameField(name: MutableState<CellName>) {
-        BasicTextField(
-            modifier = Modifier
-                .padding(top = 5.dp)
-                .align(Alignment.Bottom)
-                .border(
-                    BorderStroke(
-                        1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
-                    )
-                )
-                .wrapContentSize(),
-            value = name.value.name,
-            textStyle = TextStyle(fontSize = 15.sp),
-            singleLine = true,
-            onValueChange = {
-                name.value = CellName(it)
-            }
-        )
+        Row{
+            Text(modifier = Modifier.align(alignment = Alignment.Bottom), text = "Name: ", fontSize = 12.sp)
+            BasicTextField(
+                modifier = Modifier
+                    .padding(top = 5.dp)
+                    .align(Alignment.Bottom)
+                    .wrapContentSize(),
+                value = name.value.name,
+                textStyle = TextStyle(fontSize = 15.sp),
+                singleLine = true,
+                onValueChange = {
+                    name.value = CellName(it)
+                }
+            )
+        }
     }
 
     @Composable
@@ -165,10 +163,11 @@ class NotesTab(
         Button(
             modifier = Modifier
                 .wrapContentSize()
+                .width(35.dp)
                 .height(25.dp),
             onClick = { cells.removeAt(iCell) }
         ) {
-            Text("x", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+            Text("x", fontSize = 8.sp, fontWeight = FontWeight.Bold)
         }
     }
 
