@@ -155,8 +155,8 @@ class RenderedTextCell(
 class SketchCell(
     private val initName: String = "",
     override var name: String = "",
-    val backgroundImagePath: String //,
-//    val size: Size
+    val backgroundImagePath: String,
+    val size: Size
 ) : AbstractCell() {
     override fun save(path: Path) {
         println("Save sketch $path") // TODO
@@ -173,8 +173,8 @@ class SketchCell(
             modifier = Modifier
                 .clipToBounds()
                 .height(250.dp)
-                .fillMaxWidth()
-//                .size(width = size.width.dp, height = size.height.dp)
+//                .fillMaxWidth()
+                .size(width = size.width.dp, height = size.height.dp)
                 .pointerInput(Unit) {
                     detectDragGestures(
                         onDragStart = {

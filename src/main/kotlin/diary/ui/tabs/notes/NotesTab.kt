@@ -12,7 +12,11 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -79,12 +83,6 @@ class NotesTab(
                         CellBox(i, cell, state) { cell() }
                     }
                 }
-//                runBlocking {
-//                    println("Run blocking") // TODO
-//                    navigateDstName.value?.let {
-//                        state.scrollToItem(it, 0)
-//                    }
-//                }
             }
             VerticalScrollbar(
                 modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
@@ -109,34 +107,17 @@ class NotesTab(
                     .padding(vertical = 4.dp)
                     .fillMaxWidth(0.75F)
             ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+//                    horizontalArrangement = Arrangement.spacedBy(100.dp),
+                    modifier = Modifier.padding(bottom = 5.dp).fillMaxWidth()
+                ) {
 
-                // TODO mb move to cell and make cell name immutable
-                var text by remember { mutableStateOf(cell.name) }
-                BasicTextField(
-                    modifier = Modifier
-                        .padding(2.dp)
-                        .border(
-                            BorderStroke(
-                                1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
-                            )
-                        )
-                        .wrapContentSize(),
-                    value = text,
-                    textStyle = TextStyle(fontSize = 15.sp),
-                    singleLine = true,
-                    onValueChange = {
-                        text = it
-                        cell.name = it
-                        cell.name = it
-                    },
-                )
-                {
                     // TODO mb move to cell and make cell name immutable
                     var text by remember { mutableStateOf(cell.name) }
                     BasicTextField(
                         modifier = Modifier
-                            .padding(top = 5.dp)
-//                            .align(Alignment.Bottom)
+                            .padding(2.dp)
                             .border(
                                 BorderStroke(
                                     1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
@@ -149,8 +130,30 @@ class NotesTab(
                         onValueChange = {
                             text = it
                             cell.name = it
+                            cell.name = it
                         },
-                    )
+                    ) {
+                        // TODO mb move to cell and make cell name immutable
+                        var text by remember { mutableStateOf(cell.name) }
+                        BasicTextField(
+                            modifier = Modifier
+                                .padding(top = 5.dp)
+//                            .align(Alignment.Bottom)
+                                .border(
+                                    BorderStroke(
+                                        1.dp, MaterialTheme.colors.primary.copy(alpha = 0.2f)
+                                    )
+                                )
+                                .wrapContentSize(),
+                            value = text,
+                            textStyle = TextStyle(fontSize = 15.sp),
+                            singleLine = true,
+                            onValueChange = {
+                                text = it
+                                cell.name = it
+                            },
+                        )
+                    }
                     Button(
                         modifier = Modifier
                             .wrapContentSize()
@@ -172,20 +175,20 @@ class NotesTab(
 
                     CellButton("Add sketch") {
                         var backgroundImagePath = callJImageChooser("Choose background image").toString()
-//                        var backgroundImageBitmap = ImageBitmap(width = 200, height = 100)
-//                        if (backgroundImagePath != "null") {
-//                            backgroundImageBitmap =
-//                                org.jetbrains.skija.Image.makeFromEncoded(File(backgroundImagePath).readBytes())
-//                                    .asImageBitmap()
-//                        }
+                        var backgroundImageBitmap = ImageBitmap(height = 500, width = 500)
+                        if (backgroundImagePath != "null") {
+                            backgroundImageBitmap =
+                                org.jetbrains.skija.Image.makeFromEncoded(File(backgroundImagePath).readBytes())
+                                    .asImageBitmap()
+                        }
                         cells.add(
                             iCell + 1,
                             SketchCell(
                                 backgroundImagePath = backgroundImagePath,
-//                                size = Size(
-//                                    width = backgroundImageBitmap.width.toFloat(),
-//                                    height = backgroundImageBitmap.height.toFloat()
-//                                )
+                                size = Size(
+                                    width = backgroundImageBitmap.width.toFloat(),
+                                    height = backgroundImageBitmap.height.toFloat()
+                                )
                             )
                         )
                     }
