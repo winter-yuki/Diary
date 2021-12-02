@@ -162,6 +162,7 @@ class SketchCell(
         println("Save sketch $path") // TODO
     }
 
+
     @Composable
     override operator fun invoke() = cell {
         var offsetX by remember { mutableStateOf(0f) }
@@ -200,7 +201,7 @@ class SketchCell(
             action?.let {
                 drawPath(
                     path = path,
-                    color = Color.Magenta,
+                    color = Color(0xFF37596D), // Color.Magenta,
                     alpha = 1f,
                     style = Stroke(3f)
                 )
