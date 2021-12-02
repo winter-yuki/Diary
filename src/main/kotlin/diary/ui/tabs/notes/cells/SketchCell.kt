@@ -8,12 +8,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import java.nio.file.Path
 
-class SketchCell(override var name: CellName = CellName("")) : AbstractCell() {
+class SketchCell(
+    override var name: CellName = CellName(""),
+    path: MutableState<androidx.compose.ui.graphics.Path> =
+        mutableStateOf(androidx.compose.ui.graphics.Path())
+) : AbstractCell() {
+
+    private val pathState = path
+    private val path by path
 
     override fun save(path: Path) {
         println("Save sketch $path") // TODO
@@ -23,8 +31,8 @@ class SketchCell(override var name: CellName = CellName("")) : AbstractCell() {
     override operator fun invoke() = cell {
         var offsetX by remember { mutableStateOf(0f) }
         var offsetY by remember { mutableStateOf(0f) }
+        // It is better to replace with path mutable state
         var action by mutableStateOf<Offset?>(null)
-        val path = androidx.compose.ui.graphics.Path()
         Canvas(
             modifier = Modifier
                 .height(250.dp)
@@ -44,14 +52,19 @@ class SketchCell(override var name: CellName = CellName("")) : AbstractCell() {
                     }
                 }
         ) {
+            drawPath()
             action?.let {
-                drawPath(
-                    path = path,
-                    color = Color(0xFF37596D),
-                    alpha = 1f,
-                    style = Stroke(3f)
-                )
+                drawPath()
             }
         }
+    }
+
+    fun DrawScope.drawPath() {
+        drawPath(
+            path = path,
+            color = Color(0xFF37596D),
+            alpha = 1f,
+            style = Stroke(3f)
+        )
     }
 }
