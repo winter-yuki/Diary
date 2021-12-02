@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
+import diary.ui.MyTheme
 import diary.ui.TabManager
 import diary.ui.TopMenu
 
@@ -21,7 +22,7 @@ fun main() = application {
         onCloseRequest = ::exitApplication
     ) {
         val tabManager = TabManager()
-        DesktopMaterialTheme {
+        MyTheme {
             Column {
                 TopMenu(tabManager)
                 tabManager()
