@@ -55,7 +55,7 @@ class TabManager(
                     modifier = Modifier
                         .fillMaxWidth(fraction)
                         .fillMaxHeight()
-                        .padding(3.dp)
+                        .padding(5.dp)
                 ) {
                     Button(
                         onClick = { tabs.remove(tab) },
