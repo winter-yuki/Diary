@@ -8,9 +8,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -68,6 +66,7 @@ class NotesTab(
             modifier = Modifier
                 .align(Alignment.End)
                 .wrapContentSize()
+                .padding(5.dp)
                 .height(25.dp),
             onClick = {
                 val path = callJFileChooser(
@@ -109,10 +108,13 @@ class NotesTab(
     @Composable
     private fun CellBox(iCell: Int, cell: Cell, state: LazyListState) {
         CellContentAlignment {
-            CellAboveButtons(iCell, cell)
-            cell()
-            CellBelowButtons(iCell, cell, state)
-        }
+                CellAboveButtons(iCell, cell)
+                Row {
+                    Text(text = (iCell + 1).toString() + ". ", modifier = Modifier.align(Alignment.CenterVertically))
+                    cell()
+                }
+                CellBelowButtons(iCell, cell, state)
+            }
     }
 
     @Composable
@@ -136,10 +138,28 @@ class NotesTab(
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.padding(bottom = 5.dp, top = 10.dp).fillMaxWidth()
-        ) {
-            val text = remember { mutableStateOf(cell.name) }
-            CellNameField(text)
-            CloseCellButton(iCell)
+        )
+
+        {
+            Row(modifier = Modifier.align(Alignment.Bottom)) {
+                val text = remember { mutableStateOf(cell.name) }
+                CellNameField(text)
+            }
+            Row {
+                CellButtonAbove("⇧") {
+                    if (iCell > 0) {
+                        cells.removeAt(iCell)
+                        cells.add(iCell - 1, cell)
+                    }
+                }
+                CellButtonAbove("⇩") {
+                    if (iCell + 1 < cells.size) {
+                        cells.removeAt(iCell)
+                        cells.add(iCell + 1, cell)
+                    }
+                }
+                CloseCellButton(iCell)
+            }
         }
     }
 
@@ -151,6 +171,7 @@ class NotesTab(
                 modifier = Modifier
                     .padding(top = 5.dp)
                     .align(Alignment.Bottom)
+                    .width(100.dp)
                     .wrapContentSize(),
                 value = name.value.name,
                 textStyle = TextStyle(fontSize = 15.sp),
@@ -164,14 +185,16 @@ class NotesTab(
 
     @Composable
     private fun CloseCellButton(iCell: Int) {
-        Button(
+        OutlinedButton(
             modifier = Modifier
                 .wrapContentSize()
+                .padding(5.dp)
                 .width(35.dp)
                 .height(25.dp),
-            onClick = { cells.removeAt(iCell) }
+            onClick = { cells.removeAt(iCell) },
+            contentPadding = PaddingValues(0.dp)
         ) {
-            Text("x", fontSize = 8.sp, fontWeight = FontWeight.Bold)
+            Text("x", fontSize = 10.sp, fontWeight = FontWeight.Bold)
         }
     }
 
@@ -191,18 +214,6 @@ class NotesTab(
                 )
             ) ?: return@CellButton
             cells.add(iCell + 1, SketchCell(backgroundImage = path))
-        }
-        CellButton("⇧") {
-            if (iCell > 0) {
-                cells.removeAt(iCell)
-                cells.add(iCell - 1, cell)
-            }
-        }
-        CellButton("⇩") {
-            if (iCell + 1 < cells.size) {
-                cells.removeAt(iCell)
-                cells.add(iCell + 1, cell)
-            }
         }
         // TODO refactor
 //        when (cell) {
@@ -229,6 +240,22 @@ class NotesTab(
 //                )
 //            }
 //        }
+    }
+
+    @Composable
+    private fun CellButtonAbove(text: String, onClick: () -> Unit) {
+        OutlinedButton(
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(5.dp)
+                .width(35.dp)
+                .height(25.dp),
+            onClick = onClick,
+            contentPadding = PaddingValues(0.dp),
+            shape = MaterialTheme.shapes.small,
+        ) {
+            Text(text, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colors.primary)
+        }
     }
 
     @Composable

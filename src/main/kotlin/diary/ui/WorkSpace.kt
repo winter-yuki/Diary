@@ -1,6 +1,7 @@
 package diary.ui
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -112,7 +113,7 @@ fun TabBox(tab: Tab) {
     Surface(shape = MaterialTheme.shapes.large, elevation = 5.dp) {
         Box(
             modifier = Modifier
-                .padding(5.dp)
+                .border(border)
         ) {
             tab()
         }
