@@ -1,8 +1,6 @@
 package diary.ui.tabs.notes
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -10,7 +8,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -145,7 +145,7 @@ class NotesTab(
 
     @Composable
     private fun RowScope.CellNameField(name: MutableState<CellName>) {
-        Row{
+        Row {
             Text(modifier = Modifier.align(alignment = Alignment.Bottom), text = "Name: ", fontSize = 12.sp)
             BasicTextField(
                 modifier = Modifier
@@ -192,18 +192,17 @@ class NotesTab(
             ) ?: return@CellButton
             cells.add(iCell + 1, SketchCell(backgroundImage = path))
         }
-        CellButton("⇧")
-        {
+        CellButton("⇧") {
             if (iCell > 0) {
                 cells.removeAt(iCell)
                 cells.add(iCell - 1, cell)
             }
         }
-        CellButton("⇩")
-        {
-            if (iCell < cells.size)
-            cells.removeAt(iCell)
-            cells.add(iCell + 1, cell)
+        CellButton("⇩") {
+            if (iCell + 1 < cells.size) {
+                cells.removeAt(iCell)
+                cells.add(iCell + 1, cell)
+            }
         }
         // TODO refactor
 //        when (cell) {
