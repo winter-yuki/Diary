@@ -16,28 +16,30 @@ import androidx.compose.ui.graphics.toComposeImageBitmap
 import diary.ui.Link
 import diary.ui.TabManager
 import diary.ui.tabs.Tab
+import diary.ui.tabs.TabId
 import diary.utils.ui.makeAlertDialogStateful
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.rendering.PDFRenderer
+import java.util.*
 import java.nio.file.Path as FilePath
 
 class PdfTab(
     doc: PDDocument,
     private val tabManager: TabManager,
     private val path: FilePath,
-    currPage: Int = 0
+    currPage: Int = 0,
+    override val id: TabId = UUID.randomUUID()
 ) : Tab {
 
     private val renderer: PDFRenderer = PDFRenderer(doc)
     private var currPage by mutableStateOf(currPage)
     private val nPages: Int = doc.numberOfPages
-    override val id: Tab.Id by lazy { Tab.Id(path) }
     private val bitmapState = mutableStateOf(render())
 
+    @Composable
     override fun navigate(link: Link) {
         require(link is PdfLink)
-        // TODO
-//        _currPage.value = link.page ?: 0
+        currPage = link.page
     }
 
     @OptIn(ExperimentalFoundationApi::class)

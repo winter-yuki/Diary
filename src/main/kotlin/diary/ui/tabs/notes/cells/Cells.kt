@@ -9,6 +9,7 @@ import java.nio.file.Path
 class CellName(val name: String)
 
 interface Cell {
+
     var name: CellName
     fun save(path: Path)
 

@@ -5,10 +5,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import diary.ui.tabs.Tab
+import diary.ui.tabs.TabId
 
 class TabManager(val tabs: SnapshotStateList<Tab> = mutableStateListOf()) {
 
-    val linkBuffer = LinkBuffer() // TODO remember
+    //    val linkBuffer = LinkBuffer() // TODO remember
     val maxNTabs = 3
 
     fun add(tab: Tab, onTooManyTabs: () -> Unit) {
@@ -19,7 +20,7 @@ class TabManager(val tabs: SnapshotStateList<Tab> = mutableStateListOf()) {
         }
     }
 
-    operator fun get(id: Tab.Id): Tab? = tabs.find { it.id == id }
+    operator fun get(id: TabId): Tab? = tabs.find { it.id == id }
 }
 
 @Composable

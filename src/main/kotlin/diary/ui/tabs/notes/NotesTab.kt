@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Button
@@ -23,12 +22,16 @@ import androidx.compose.ui.unit.sp
 import diary.ui.Link
 import diary.ui.TabManager
 import diary.ui.tabs.Tab
+import diary.ui.tabs.TabId
 import diary.ui.tabs.notes.cells.*
 import diary.utils.JFileChooserMode
 import diary.utils.callJFileChooser
 import diary.utils.removeIfExists
+import diary.utils.ui.makeAlertDialogStateful
+import kotlinx.coroutines.runBlocking
 import java.nio.file.Files.createDirectory
 import java.nio.file.Path
+import java.util.*
 import javax.swing.filechooser.FileNameExtensionFilter
 import kotlin.io.path.createFile
 import kotlin.io.path.extension
@@ -36,14 +39,29 @@ import kotlin.io.path.extension
 class NotesTab(
     private val cells: SnapshotStateList<Cell> = mutableStateListOf(),
     private val tabManager: TabManager,
-    var path: Path = Path.of("")
+    private var path: Path = Path.of(""),
+    override val id: TabId = UUID.randomUUID()
 ) : Tab {
 
-    // TODO change id to something better: new notes are the same
-    override val id: Tab.Id get() = Tab.Id(path)
+    private val state = LazyListState()
 
+    @Composable
     override fun navigate(link: Link) {
         require(link is NotesLink)
+        val index = cells.indexOfFirst { it.name == link.cellName }
+        if (index == -1) {
+            makeAlertDialogStateful(
+                title = "Link Is Inaccessible",
+                text = """Link to the notes:
+                    | path = ${link.path}
+                    | name = ${link.cellName.name}
+                """.trimIndent()
+            )
+        } else {
+            runBlocking {
+                state.animateScrollToItem(index, 0)
+            }
+        }
         // TODO
     }
 
@@ -54,7 +72,7 @@ class NotesTab(
         }
         Column {
             SaveButton()
-            val state = rememberLazyListState()
+            val state = remember { this@NotesTab.state }
             CellList(cells, state)
         }
     }

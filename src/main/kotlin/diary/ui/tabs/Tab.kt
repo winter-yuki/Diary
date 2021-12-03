@@ -2,15 +2,15 @@ package diary.ui.tabs
 
 import androidx.compose.runtime.Composable
 import diary.ui.Link
-import java.nio.file.Path
+import java.util.*
+
+typealias TabId = UUID
 
 interface Tab {
 
-    // TODO fix
-    data class Id(val id: Path)
+    val id: TabId
 
-    val id: Id
-
+    @Composable
     fun navigate(link: Link)
 
     @Composable

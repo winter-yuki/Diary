@@ -1,23 +1,34 @@
 package diary.ui
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import diary.ui.tabs.Tab
+import diary.ui.tabs.TabId
 
 interface Link {
-    val id: Tab.Id
+
+    val id: TabId
+
+    @Composable
     fun navigate(tabManager: TabManager)
 }
 
 abstract class AbstractLink : Link {
-    protected fun navigateOrCreate(tabManager: TabManager, createTab: () -> Tab) {
+
+    @Composable
+    protected fun navigateOrCreate(
+        tabManager: TabManager,
+        createTab: () -> Tab
+    ) {
         val tab = tabManager[id]
         if (tab != null) {
             tab.navigate(this)
         } else {
             val newTab = createTab()
-//            tabManager.add(newTab) TODO
+            var tooManyTabs by TooManyTabsAlert(tabManager)
+            tabManager.add(newTab) { tooManyTabs = true }
             newTab.navigate(this)
         }
     }
 }
-
-class LinkBuffer(var link: Link? = null)
