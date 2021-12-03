@@ -2,7 +2,6 @@ package diary.utils.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -28,8 +27,6 @@ fun DrawCanvas(
     var action by mutableStateOf<Offset?>(null)
     Canvas(
         modifier = modifier
-            .chooseSize(bitmap)
-            .fillMaxWidth()
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = {
@@ -62,5 +59,5 @@ private fun DrawScope.drawPath(path: Path) {
     )
 }
 
-private fun Modifier.chooseSize(bitmap: ImageBitmap?): Modifier =
+fun Modifier.chooseSize(bitmap: ImageBitmap?): Modifier =
     bitmap?.run { size(width = width.dp, height = height.dp) } ?: this

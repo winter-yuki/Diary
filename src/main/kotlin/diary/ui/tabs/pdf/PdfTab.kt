@@ -1,21 +1,21 @@
 package diary.ui.tabs.pdf
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.mouseClickable
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.toComposeImageBitmap
-import androidx.compose.ui.input.pointer.isSecondaryPressed
 import diary.ui.Link
 import diary.ui.TabManager
 import diary.ui.tabs.Tab
-import diary.utils.ui.DrawCanvas
 import diary.utils.ui.makeAlertDialogStateful
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.rendering.PDFRenderer
@@ -32,10 +32,7 @@ class PdfTab(
     private var currPage by mutableStateOf(currPage)
     private val nPages: Int = doc.numberOfPages
     override val id: Tab.Id by lazy { Tab.Id(path) }
-    private val pageDrawPaths =
-        mutableMapOf<Int, MutableState<Path>>().withDefault {
-            mutableStateOf(Path())
-        }
+    private val bitmapState = mutableStateOf(render())
 
     override fun navigate(link: Link) {
         require(link is PdfLink)
@@ -45,32 +42,25 @@ class PdfTab(
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    override fun invoke() {
+    override fun invoke() = Box(modifier = Modifier.fillMaxSize()) {
         var linkCreatedDialog by makeAlertDialogStateful(
             title = "Link created!",
             text = "Link created and now you can add it to your notes"
         )
-        val image = remember { mutableStateOf(render()) }
+        val bitmap by bitmapState
         Column(modifier = Modifier.fillMaxSize()) {
-            DrawCanvas(
-                pageDrawPaths.getValue(currPage),
-                bitmap = image.value,
+            Image(
+                bitmap, contentDescription = "$currPage or $path",
                 modifier = Modifier
+                    .fillMaxHeight(0.9F)
                     .align(Alignment.CenterHorizontally)
-                    .fillMaxHeight(0.8F)
-                    .mouseClickable {
-                        if (buttons.isSecondaryPressed) {
-                            tabManager.linkBuffer.link = PdfLink(path, currPage)
-                            linkCreatedDialog = true
-                        }
-                    }
             )
-            NavigationBar(image)
+            NavigationBar()
         }
     }
 
     @Composable
-    private fun ColumnScope.NavigationBar(bitmapState: MutableState<ImageBitmap>) {
+    private fun ColumnScope.NavigationBar() {
         Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
             var bitmap by bitmapState
             NavigationButton("Prev") {
