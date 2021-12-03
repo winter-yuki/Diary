@@ -8,7 +8,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -105,13 +108,15 @@ class NotesTab(
     @Composable
     private fun CellBox(iCell: Int, cell: Cell, state: LazyListState) {
         CellContentAlignment {
-                CellAbove(iCell, cell)
-                Row {
-                    CellNumber(iCell)
+            Row {
+                CellNumber(iCell)
+                Column {
+                    CellAbove(iCell, cell)
                     cell()
+                    CellBelowButtons(iCell, cell, state)
                 }
-                CellBelowButtons(iCell, cell, state)
             }
+        }
     }
 
     @Composable
@@ -135,9 +140,7 @@ class NotesTab(
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.padding(bottom = 5.dp, top = 10.dp).fillMaxWidth()
-        )
-
-        {
+        ) {
             Row(modifier = Modifier.align(Alignment.Bottom)) {
                 val text = remember { mutableStateOf(cell.name) }
                 CellNameField(text)
@@ -219,18 +222,6 @@ class NotesTab(
                 )
             ) ?: return@CellButton
             cells.add(iCell + 1, SketchCell(backgroundImage = path))
-        }
-        CellButton("⇧") {
-            if (iCell > 0) {
-                cells.removeAt(iCell)
-                cells.add(iCell - 1, cell)
-            }
-        }
-        CellButton("⇩") {
-            if (iCell + 1 < cells.size) {
-                cells.removeAt(iCell)
-                cells.add(iCell + 1, cell)
-            }
         }
         when (cell) {
             is TextCell -> CellButton("Render") {
