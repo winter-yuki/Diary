@@ -31,7 +31,6 @@ import diary.utils.ui.makeAlertDialogStateful
 import kotlinx.coroutines.runBlocking
 import java.nio.file.Files.createDirectory
 import java.nio.file.Path
-import java.util.*
 import javax.swing.filechooser.FileNameExtensionFilter
 import kotlin.io.path.createFile
 import kotlin.io.path.extension
@@ -39,15 +38,16 @@ import kotlin.io.path.extension
 class NotesTab(
     private val cells: SnapshotStateList<Cell> = mutableStateListOf(),
     private val tabManager: TabManager,
-    private var path: Path = Path.of(""),
-    override val id: TabId = UUID.randomUUID()
+    private var path: Path? = null
 ) : Tab {
 
+    override val id: TabId = path
     private val state = LazyListState()
 
     @Composable
     override fun navigate(link: Link) {
         require(link is NotesLink)
+        println("target navigate")
         val index = cells.indexOfFirst { it.name == link.cellName }
         if (index == -1) {
             makeAlertDialogStateful(
@@ -56,7 +56,7 @@ class NotesTab(
                     | path = ${link.path}
                     | name = ${link.cellName.name}
                 """.trimIndent()
-            )
+            ).value = true
         } else {
             runBlocking {
                 state.animateScrollToItem(index, 0)
@@ -225,7 +225,9 @@ class NotesTab(
                 cells.add(
                     iCell,
                     RenderedTextCell(
-                        textCell = cell
+                        textCell = cell,
+                        notesPath = path,
+                        tabManager = tabManager
                     )
                 )
             }

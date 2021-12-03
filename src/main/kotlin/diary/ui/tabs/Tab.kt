@@ -2,9 +2,9 @@ package diary.ui.tabs
 
 import androidx.compose.runtime.Composable
 import diary.ui.Link
-import java.util.*
+import java.nio.file.Path
 
-typealias TabId = UUID
+typealias TabId = Path?
 
 interface Tab {
 

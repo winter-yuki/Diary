@@ -9,7 +9,6 @@ import diary.ui.tabs.TabId
 
 class TabManager(val tabs: SnapshotStateList<Tab> = mutableStateListOf()) {
 
-    //    val linkBuffer = LinkBuffer() // TODO remember
     val maxNTabs = 3
 
     fun add(tab: Tab, onTooManyTabs: () -> Unit) {

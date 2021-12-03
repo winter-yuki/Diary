@@ -28,7 +28,7 @@ class PdfTab(
     private val tabManager: TabManager,
     private val path: FilePath,
     currPage: Int = 0,
-    override val id: TabId = UUID.randomUUID()
+    override val id: TabId = null
 ) : Tab {
 
     private val renderer: PDFRenderer = PDFRenderer(doc)

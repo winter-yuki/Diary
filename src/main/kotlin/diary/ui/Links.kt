@@ -22,6 +22,7 @@ abstract class AbstractLink : Link {
         createTab: () -> Tab
     ) {
         val tab = tabManager[id]
+        println("tab $tab found")
         if (tab != null) {
             tab.navigate(this)
         } else {
