@@ -23,10 +23,7 @@ import androidx.compose.ui.unit.sp
 import diary.ui.Link
 import diary.ui.TabManager
 import diary.ui.tabs.Tab
-import diary.ui.tabs.notes.cells.Cell
-import diary.ui.tabs.notes.cells.CellName
-import diary.ui.tabs.notes.cells.SketchCell
-import diary.ui.tabs.notes.cells.TextCell
+import diary.ui.tabs.notes.cells.*
 import diary.utils.JFileChooserMode
 import diary.utils.callJFileChooser
 import diary.utils.removeIfExists
@@ -204,31 +201,21 @@ class NotesTab(
                 cells.add(iCell + 1, cell)
             }
         }
-        // TODO refactor
-//        when (cell) {
-//            is TextCell -> CellButton("Render") {
-//                cells.removeAt(iCell)
-//                cells.add(
-//                    iCell,
-//                    RenderedTextCell(
-//                        text = cell.text,
-//                        name = cell.name,
-//                        scrollState = state,
-//                        cells = cells,
-//                        tabManager = tabManager
-//                    )
-//                )
-//            }
-//            is RenderedTextCell -> CellButton("Edit") {
-//                cells.removeAt(iCell)
-//                cells.add(
-//                    iCell,
-//                    TextCell(_text = cell.text).apply {
-//                        name = cell.name
-//                    }
-//                )
-//            }
-//        }
+        when (cell) {
+            is TextCell -> CellButton("Render") {
+                cells.removeAt(iCell)
+                cells.add(
+                    iCell,
+                    RenderedTextCell(
+                        textCell = cell
+                    )
+                )
+            }
+            is RenderedTextCell -> CellButton("Edit") {
+                cells.removeAt(iCell)
+                cells.add(iCell, cell.textCell)
+            }
+        }
     }
 
     @Composable
