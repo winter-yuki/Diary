@@ -11,6 +11,11 @@ import androidx.compose.material.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import diary.ui.tabs.Tab
@@ -50,8 +55,38 @@ fun TooManyTabsAlert(tabManager: TabManager) =
 private fun Empty() {
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.align(Alignment.Center)) {
-            Text("Welcome!", fontSize = 20.sp)
-            Text("Press New to create new notes \nor Open to open existing notes of pdf")
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Welcome!", fontSize = 60.sp, textAlign = TextAlign.Center)
+            }
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    buildAnnotatedString {
+                        append(
+                            "Press "
+                        )
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("New")
+                        }
+                        append(
+                            " to create new notes \nor "
+                        )
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Open")
+                        }
+                        append(
+                            " to open existing notes of pdf"
+                        )
+                    },
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }
