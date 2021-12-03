@@ -15,9 +15,14 @@ import java.nio.file.Path
 import kotlin.io.path.writeText
 
 class RenderedTextCell(
-    override var name: CellName,
     val textCell: TextCell
 ) : AbstractCell() {
+
+    override var name: CellName
+        get() = textCell.name
+        set(value) {
+            textCell.name = value
+        }
 
     private val text by textCell.text
 

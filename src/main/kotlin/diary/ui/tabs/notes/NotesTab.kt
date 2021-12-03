@@ -21,10 +21,7 @@ import androidx.compose.ui.unit.sp
 import diary.ui.Link
 import diary.ui.TabManager
 import diary.ui.tabs.Tab
-import diary.ui.tabs.notes.cells.Cell
-import diary.ui.tabs.notes.cells.CellName
-import diary.ui.tabs.notes.cells.SketchCell
-import diary.ui.tabs.notes.cells.TextCell
+import diary.ui.tabs.notes.cells.*
 import diary.utils.JFileChooserMode
 import diary.utils.callJFileChooser
 import diary.utils.removeIfExists
@@ -108,9 +105,9 @@ class NotesTab(
     @Composable
     private fun CellBox(iCell: Int, cell: Cell, state: LazyListState) {
         CellContentAlignment {
-                CellAboveButtons(iCell, cell)
+                CellAbove(iCell, cell)
                 Row {
-                    Text(text = (iCell + 1).toString() + ". ", modifier = Modifier.align(Alignment.CenterVertically))
+                    CellNumber(iCell)
                     cell()
                 }
                 CellBelowButtons(iCell, cell, state)
@@ -134,7 +131,7 @@ class NotesTab(
     }
 
     @Composable
-    private fun CellAboveButtons(iCell: Int, cell: Cell) {
+    private fun CellAbove(iCell: Int, cell: Cell) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.padding(bottom = 5.dp, top = 10.dp).fillMaxWidth()
@@ -164,7 +161,15 @@ class NotesTab(
     }
 
     @Composable
-    private fun RowScope.CellNameField(name: MutableState<CellName>) {
+    private fun RowScope.CellNumber(iCell: Int) {
+        Text(
+            text = (iCell + 1).toString() + ". ",
+            modifier = Modifier.align(Alignment.CenterVertically)
+        )
+    }
+
+    @Composable
+    private fun CellNameField(name: MutableState<CellName>) {
         Row {
             Text(modifier = Modifier.align(alignment = Alignment.Bottom), text = "Name: ", fontSize = 12.sp)
             BasicTextField(
@@ -215,31 +220,33 @@ class NotesTab(
             ) ?: return@CellButton
             cells.add(iCell + 1, SketchCell(backgroundImage = path))
         }
-        // TODO refactor
-//        when (cell) {
-//            is TextCell -> CellButton("Render") {
-//                cells.removeAt(iCell)
-//                cells.add(
-//                    iCell,
-//                    RenderedTextCell(
-//                        text = cell.text,
-//                        name = cell.name,
-//                        scrollState = state,
-//                        cells = cells,
-//                        tabManager = tabManager
-//                    )
-//                )
-//            }
-//            is RenderedTextCell -> CellButton("Edit") {
-//                cells.removeAt(iCell)
-//                cells.add(
-//                    iCell,
-//                    TextCell(_text = cell.text).apply {
-//                        name = cell.name
-//                    }
-//                )
-//            }
-//        }
+        CellButton("⇧") {
+            if (iCell > 0) {
+                cells.removeAt(iCell)
+                cells.add(iCell - 1, cell)
+            }
+        }
+        CellButton("⇩") {
+            if (iCell + 1 < cells.size) {
+                cells.removeAt(iCell)
+                cells.add(iCell + 1, cell)
+            }
+        }
+        when (cell) {
+            is TextCell -> CellButton("Render") {
+                cells.removeAt(iCell)
+                cells.add(
+                    iCell,
+                    RenderedTextCell(
+                        textCell = cell
+                    )
+                )
+            }
+            is RenderedTextCell -> CellButton("Edit") {
+                cells.removeAt(iCell)
+                cells.add(iCell, cell.textCell)
+            }
+        }
     }
 
     @Composable
