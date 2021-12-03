@@ -106,7 +106,7 @@ class NotesTab(
     @Composable
     private fun CellBox(iCell: Int, cell: Cell, state: LazyListState) {
         CellContentAlignment {
-            CellAboveButtons(iCell, cell)
+            CellAbove(iCell, cell)
             cell()
             CellBelowButtons(iCell, cell, state)
         }
@@ -129,7 +129,7 @@ class NotesTab(
     }
 
     @Composable
-    private fun CellAboveButtons(iCell: Int, cell: Cell) {
+    private fun CellAbove(iCell: Int, cell: Cell) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.padding(bottom = 5.dp, top = 10.dp).fillMaxWidth()
