@@ -189,7 +189,7 @@ class NotesTab(
                 filter = FileNameExtensionFilter(
                     "Image Files", "png", "jpeg", "jpg"
                 )
-            )
+            ) ?: return@CellButton
             cells.add(iCell + 1, SketchCell(backgroundImage = path))
         }
         // TODO refactor

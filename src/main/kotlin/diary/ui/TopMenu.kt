@@ -14,7 +14,7 @@ import diary.ui.tabs.notes.NotesTab
 import diary.ui.tabs.pdf.PdfTab
 import diary.utils.FileType
 import diary.utils.callJFileChooser
-import diary.utils.makeAlertDialogStateful
+import diary.utils.ui.makeAlertDialogStateful
 import javax.swing.filechooser.FileNameExtensionFilter
 
 @Composable

@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import diary.ui.tabs.Tab
-import diary.utils.forEachIndexedCo
-import diary.utils.makeAlertDialogStateful
+import diary.utils.ui.forEachIndexedCo
+import diary.utils.ui.makeAlertDialogStateful
 
 @Composable
 fun WorkSpace(tabManager: TabManager) {
