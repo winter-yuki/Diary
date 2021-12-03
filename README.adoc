@@ -6,11 +6,11 @@ Short description of the project can be found https://wiki.compscicenter.ru/inde
 
 == Contribution
 
-.Set up
+.IDE setup
 . Install Intellij IDEA
 . Install https://plugins.jetbrains.com/plugin/16541-compose-multiplatform-ide-support[Compose Multiplatform Plugin]
 . Clone project and run
 
-.Gradle set up
+.Via Gradle manually
 . Clone project
 . Run `gradle run`
